@@ -1,0 +1,1140 @@
+* Inicializa el SP y el PC
+**************************
+	ORG     $0
+	DC.L    $8000           * Pila
+*        DC.L    PRUEBAS          * PC
+
+        ORG     $400
+
+* Definicion de equivalencias
+*********************************
+	
+*************A*******************
+	
+MR1A    EQU     $effc01       	* de modo A (escritura)
+MR2A    EQU     $effc01       	* de modo A (2Ã‚Âº escritura)
+SRA     EQU     $effc03       	* de estado A (lectura)
+CSRA    EQU     $effc03       	* de seleccion de reloj A (escritura)
+CRA     EQU     $effc05       	* de control A (escritura)
+TBA     EQU     $effc07       	* buffer transmision A (escritura)
+RBA     EQU     $effc07       	* buffer recepcion A  (lectura)
+ACR	EQU	$effc09	      	* de control auxiliar
+IMR     EQU     $effc0B       	* de mascara de interrupcion A (escritura)
+ISR     EQU     $effc0B       	* de estado de interrupcion A (lectura)
+
+*************B******************
+	
+MR1B	EQU	$effc11		* de modo B (escritura)
+MR2B	EQU	$effc11		* de modo B (2Âª escritura)
+SRB	EQU	$effc13		* de estado B (lectura)
+CSRB	EQU	$effc13		* de seleccion de reloj B (escritura)
+CRB	EQU	$effc15		* de control B (escritura)
+TBB	EQU	$effc17		* buffer transmision B (escritura)
+RBB	EQU	$effc17		* buffer recepcion B (lectura)
+	
+IVR	EQU	$effc19		* del vector de interrupcion (lectura y escritura)
+
+
+* Inicializacion de los Buffers
+	
+BUFFER	EQU	2001
+	
+PISA:		DC.L 0		* Puntero insercion lectura A
+PESA:		DC.L 0		* Puntero extracciÃ³n lectura A
+BSA:		DS.B BUFFER	* Inicio del buffer de lectura A
+
+PIPA:		DC.L 0		* Puntero insercion escritura A
+PEPA:		DC.L 0		* Puntero extraccion escritura A
+BEA:		DS.B BUFFER	* Inicio del buffer de escritura A
+
+PISB:		DC.L 0		* Puntero insercion lectura B
+PESB:		DC.L 0		* Puntero extraccion lectura B
+BSB:		DS.B BUFFER	* Inicio del buffer de lectura B
+
+PIPB:		DC.L 0		* Puntero insercion escritura B
+PEPB:		DC.L 0		* Puntero extraccion escritura B
+BEB:		DS.B BUFFER	* Inicio del buffer de escritura B
+COPIAIMR:	DC.B 0
+FLAGA:		DC.B 0
+FLAGB:		DC.B 0
+
+
+* BUFPRU:	DS.B	BUFFER
+**************************** INIT *************************************************************
+	
+INIT:	MOVE.B          #%00000011,MR1A     * 8 bits por caracter.
+        MOVE.B          #%00000000,MR2A     * Eco desactivado.
+	
+        MOVE.B          #%11001100,CSRA     * Velocidad = 38400 bps.
+        MOVE.B          #%00000000,ACR      * Velocidad = 38400 bps.
+        MOVE.B          #%00000101,CRA      * Transmision y recepcion activados.
+
+	************REVISAR B*********
+	
+        MOVE.B          #%00000011,MR1B     * 8 bits por caracter.
+        MOVE.B          #%00000000,MR2B     * Eco desactivado.
+	
+        MOVE.B          #%11001100,CSRB     * Velocidad = 38400 bps.
+        MOVE.B          #%00000101,CRB      * Transmision y recepcion activado
+
+	MOVE.B		#%00100010,IMR	    * Se habilitan las transmisiones
+	MOVE.B		#$22,COPIAIMR	    
+	MOVE.B		#$40,IVR
+	MOVE.L		#RTI,$100  	    *Direccion de la RTI
+	MOVE.L		#BSA,PISA
+	MOVE.L		#BSA,PESA
+
+	MOVE.L		#BEA,PIPA
+	MOVE.L		#BEA,PEPA
+
+	MOVE.L		#BSB,PISB
+	MOVE.L		#BSB,PESB
+
+	MOVE.L		#BEB,PIPB
+	MOVE.L		#BEB,PEPB
+
+        RTS
+**************************** FIN INIT *********************************************************
+
+**************************** PRINT *********************************************************
+
+	
+PRINT:	LINK 	A6,#0		* Marco de pila
+	MOVE.L	D1,-(A7)
+	MOVE.L	D2,-(A7)
+	MOVE.L	D3,-(A7)
+	MOVE.L	D4,-(A7)
+	MOVE.L	D5,-(A7)
+
+	MOVE.W	14(A6),D2	* Tamaño
+	MOVE.W	12(A6),D3	* Descriptor
+	MOVE.L	8(A6),A4	* Buffer
+	
+	CMP.W	#0,D3
+	BEQ	CASE2		* Buffer de escritura A
+	CMP.W	#1,D3
+	BEQ	CASE3		* Buffer de escritura B
+	BRA	ERRORP		* Si no se cumple ninguno, saltamos a ERRORP
+
+CASE2:	MOVE.L	#0,D0
+	CMP.L	#0,D2		* Comprobamos si el tamaño es 0
+	BEQ	FINP		* Si es 0, salimos de la subrutina	
+	MOVE.L  #0,D4     	* D4 contador a 0
+	MOVE.L	#0,D5	  	* flag para el retorno de carro
+	
+BUCPA:	MOVE.L	#2,D0     	* Cargamos en D0 las coordenadas del buffer interno
+	MOVE.B  (A4)+,D1  	* Cargamos en D1 el caracter del buffer a escribir	
+	BSR	ESCCAR    	* Saltamos a ESCCAR para escribir en el buffer interno	
+	CMP.L	#$FFFFFFFF,D0	* Estaba lleno el buffer o no?
+	BEQ	LLA
+	CMP.B	#13,D1		* Es un retorno de carro el ultimo caracter transmitido?
+	BNE	NO13A	
+	MOVE.L	#1,D5		* Si es retorno de carro, activamos flag en D5
+NO13A:	ADD.L   #1,D4     	* Incrementamos contador
+	CMP.L   D4,D2		
+	BNE     BUCPA		* Volvemos a iterar si no hemos terminado
+	
+	MOVE.L	D4,D0	 	* Escribimos en D0 el numero de caracteres leidos
+	CMP.B	#1,D5		* Esta activado el flag del retorno de carro?
+	BNE	FINP
+	MOVE.W	#$2700,SR
+	OR.B	#%00000001,COPIAIMR	* Activamos interrupcion de transmision
+	MOVE.B	COPIAIMR,IMR
+	MOVE.W	#$2000,SR
+	BRA     FINP
+        
+CASE3:	MOVE.L	#0,D0
+	CMP.B	#0,D2		* Comprobamos si el tamaño es 0
+	BEQ	FINP		* Si es 0, salimos de la subrutina	
+	MOVE.L  #0,D4     	* D4 contador a 0
+	MOVE.L	#0,D5	  	* flag para el retorno de carro
+	
+BUCPB:	MOVE.L	#3,D0     	* Cargamos en D0 las coordenadas del buffer interno
+	MOVE.B  (A4)+,D1  	* Cargamos en D1 el caracter del buffer a escribir
+	BSR	ESCCAR    	* Saltamos a ESCCAR para escribir en el buffer interno
+	CMP.L	#$FFFFFFFF,D0	* Estaba lleno el buffer o no?
+	BEQ	LLB
+	CMP.B	#13,D1		* Es un retorno de carro el ultimo caracter transmitido?
+ 	BNE	NO13B	
+	MOVE.B	#1,D5		* Si es retorno de carro, activamos flag en D5
+NO13B:	ADD.L   #1,D4     	* Incrementamos contador
+	CMP.L   D4,D2		
+	BNE	BUCPB		* Volvemos a iterar si no hemos terminado
+	
+	MOVE.L	D4,D0		* Escribimos en D0 el numero de caracteres leidos
+	CMP.B	#1,D5		* Esta activado el flag del retorno de carro?
+	BNE	FINP
+	MOVE.W	#$2700,SR
+	OR.B	#%00010000,COPIAIMR
+	MOVE.B	COPIAIMR,IMR
+	MOVE.W	#$2000,SR
+	BRA     FINP
+
+LLA:	MOVE.L	D4,D0		* Metemos el numero de elementos escritos en D0
+	CMP.L 	#0,D0		* Comprobamos si se ha copiado alguno o no
+	BEQ	FINP
+	CMP.B	#1,D5		* Esta activado el flag del retorno de carro?
+	BNE	FINP
+	MOVE.W	#$2700,SR
+	OR.B	#%00000001,COPIAIMR
+	MOVE.B	COPIAIMR,IMR
+	MOVE.W	#$2000,SR
+	BRA	FINP
+
+LLB:	MOVE.L	D4,D0		* Metemos el numero de elementos escritos en D0
+	CMP.L 	#0,D0		* Comprobamos si se ha copiado alguno o no
+	BEQ	FINP
+	CMP.B	#1,D5		* Esta activado el flag del retorno de carro?
+	BNE	FINP
+	MOVE.W	#$2700,SR
+	OR.B	#%00010000,COPIAIMR
+	MOVE.B	COPIAIMR,IMR
+	MOVE.W	#$2000,SR	
+	BRA	FINP	
+	
+ERRORP:	MOVE.L	#$FFFFFFFF,D0	* Existe algun error en los parametros pasados
+FINP:	MOVE.L	(A7)+,D5	
+	MOVE.L	(A7)+,D4
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D2
+	MOVE.L	(A7)+,D1
+	UNLK	A6
+	RTS
+ 
+**************************** FIN PRINT *********************************************************
+
+**************************** SCAN *********************************************************
+		
+	
+SCAN:	LINK 	A6,#0
+	MOVE.L	D4,-(A7)
+	MOVE.L	D3,-(A7)
+	MOVE.L	D2,-(A7)
+	MOVE.L	A4,-(A7)
+
+	MOVE.W  14(A6),D2	* Tamaño
+	MOVE.W	12(A6),D3	* Descriptor
+	MOVE.L  8(A6),A4	* Buffer
+	
+	CMP.W	#0,D3
+	BEQ	CASE0		* Buffer de lectura A
+	CMP.W	#1,D3
+	BEQ	CASE1		* Buffer de lectura B
+	BRA	ERROR		* Si no se cumple ninguno, saltamos a ERROR
+	
+CASE0:	MOVE.L  #0,D4		* Contador
+	MOVE.L	#0,D0
+	BSR	LINEA
+	CMP.L   #0,D0		* averiguamos si hay una línea
+	BEQ  	FINS
+	CMP.L	D2,D0		* Comparamos el resultado de linea con el tamaño D0=D2
+	BLS	BUCS0		* Si es mayor, ERROR, si no, Leer linea
+	MOVE.L	#0,D0
+	BRA	FINS
+BUCS0:	MOVE.L	#0,D0
+	BSR	LEECAR
+	MOVE.B	D0,(A4)+	* Escribimos el caracter en el buffer de entrada
+	ADD.L 	#1,D4		* Incrementamos el numero de caracteres leidos
+	CMP.B	#13,D0		* Comprobamos si el elemento era el retorno de carro, en cuyo caso, ya habriamos leido la linea.
+	BEQ	FINS
+	BRA	BUCS0
+	
+CASE1:	MOVE.L  #0,D4		* Contador
+	MOVE.L	#1,D0
+	BSR	LINEA	
+	CMP.L   #0,D0		* averiguamos si hay una línea
+	BEQ  	FINS	
+	CMP.L	D2,D0		* Comparamos el resultado de linea con el tamaño
+	BLS	BUCS1		* Si es mayor, ERROR, si no, Leer linea
+	MOVE.L	#0,D0
+	BRA	FINS
+BUCS1:	MOVE.L	#1,D0
+	BSR	LEECAR
+	MOVE.B	D0,(A4)+	* Metemos el caracter en el buffer pasado por entrada
+	ADD.L	#1,D4		* Incrementamos el contador de elementos copiados
+	CMP.B	#13,D0		* Comprobamos si el caracter era el retorno de carro
+	BEQ	FINS
+	BRA	BUCS1
+	
+ERROR:	MOVE.L	(A7)+,A4
+	MOVE.L	(A7)+,D2
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D4
+	
+	MOVE.L	#$FFFFFFFF,D0
+	UNLK	A6
+	RTS
+	
+FINS:	MOVE.L	D4,D0		*Movemos el numero de elementos leidos a D0
+	
+	MOVE.L	(A7)+,A4
+	MOVE.L	(A7)+,D2
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D4
+	
+	UNLK	A6
+	RTS
+
+**************************** FIN SCAN *********************************************************	
+
+**************************** RTI *********************************************************
+RTI:	MOVE.L	D2,-(A7)
+	MOVE.L	D3,-(A7)
+	MOVE.L	D1,-(A7)
+	MOVE.L	D0,-(A7)
+	
+	MOVE.B	ISR,D2  	* Contenido de ISR a D2
+	MOVE.B	COPIAIMR,D3	* Copia de IMR a D3
+	AND.B	D2,D3		* AND entre ISR y IMR para averiguar de donde viene la senial
+	BTST	#0,D3		* Bit 0 de COPIAIMR esta activado -> Transmision A habilitada
+	BNE	TA
+	BTST	#1,D3		* Bit 1 de COPIAIMR esta activado -> Recepcion A habilitada
+	BNE	RA	
+	BTST	#4,D3		* Bit 4 de COPIAIMR esta activado -> Transmision B habilitada
+	BNE	TB
+	BTST	#5,D3 		* Bit 5 de COPIAIMR esta activado -> Recepcion B habilitada
+	BNE	RB
+
+	
+TA:	BTST	#0,FLAGA
+	BNE	SALTA 
+
+	MOVE.L	#2,D0		* leemos el caracter
+	BSR	LEECAR		
+	MOVE.B	D0,(TBA)	* Copiamos el caracter leido en TBA
+	CMP.L	#13,D0		* Si el caracter era el retorno de carro, salimos de la RTI cambiando 
+	BNE	FINRTI		* el flag para meter un salto de linea en el siguiente acceso. Si no, salimos de la RTI
+	MOVE.B	#%00000001,FLAGA
+	BRA	FINRTI
+	
+RA:	MOVE.L	#0,D0		* Escribimos el caracter en el buffer
+	MOVE.B	(RBA),D1	* llamando a ESCCAR
+	BSR	ESCCAR
+	BRA	FINRTI
+	
+TB:	BTST	#0,FLAGB
+	BNE	SALTB
+
+	MOVE.L	#3,D0
+	BSR	LEECAR		* Leemos el caracter del buffer interno 
+ 	MOVE.B	D0,(TBB)	* Metemos el caracter leido del buffer interno en TBB
+	CMP.L	#13,D0		* Si el caracter era el retorno de carro, salimos de la RTI cambiando el flag 
+	BNE	FINRTI         * para meter un salto de linea en el siguiente acceso. Si no, salimos de la RTI
+	MOVE.B	#%00000001,FLAGB
+	BRA	FINRTI
+	
+RB:	MOVE.L	#1,D0		* Escribimos el caracter en el buffer interno
+	MOVE.B	(RBB),D1	* llamando a ESCCAR
+	BSR	ESCCAR
+	BRA	FINRTI
+
+SALTA:	MOVE.B	#10,(TBA)	* Escribimos un salto de linea y ponemos el flag a 0
+	MOVE.B	#%00000000,FLAGA
+	MOVE.L	#2,D0		* Comprobamos si hay mas lineas en el buffer
+	BSR	LINEA		* llamando a LINEA 
+	CMP.L	#0,D0
+	BEQ	NMLA 		* No hay mas lineas, hay que desactivar interrupciones
+
+	BRA 	FINRTI
+	
+SALTB:	MOVE.B	#10,(TBB)	* Escribimos un salto de linea y ponemos el flag a 0 
+	MOVE.B	#%00000000,FLAGB
+	MOVE.L	#3,D0		* Comprobamos si hay mas linea en el buffer interno
+	BSR	LINEA		* llamando a LINEA 
+	CMP.B	#0,D0
+	BEQ	NMLB		* No hay mas lineas, hay que desactivar interrupciones 
+
+	BRA 	FINRTI
+
+
+NMLA:	BCLR	#0,COPIAIMR	* Al no haber mas lineas, desactivamos la interrupcion
+	MOVE.B 	COPIAIMR,IMR	
+	BRA 	FINRTI		
+
+NMLB:	BCLR	#4,COPIAIMR	* Al no haber mas lineas, desactivamos la interrupcion
+	MOVE.B 	COPIAIMR,IMR
+	BRA 	FINRTI
+	
+FINRTI:	MOVE.L	(A7)+,D0
+	MOVE.L	(A7)+,D1
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D2
+	RTE
+ 
+
+
+**************************** FIN RTI *********************************************************
+	
+**************************** LEECAR *********************************************************
+	
+	
+LEECAR:	MOVE.L	D3,-(A7)
+	MOVE.L	D1,-(A7)
+	MOVE.L	A2,-(A7)
+	MOVE.L	A1,-(A7)
+	
+	AND.L	#3,D0		* Limpiamos la parte superior
+	CMP.B	#0,D0		* Si es un 0, seleccionamos recepcion de la linea  A
+	BEQ	RECA
+	CMP.B	#1,D0		* Si es un 1, seleccionamos recepcion de la linea B
+	BEQ	RECB
+	CMP.B	#2,D0		* Si es un 2, seleccionamos transmision de la linea A
+	BEQ	TRANSA
+	CMP.B	#3,D0		* Si es un 3, seleccionamos transmision de la linea B
+	BEQ	TRANSB
+
+RECA:	AND.L	#0,D0		* Inicializamos D0 a 0
+	MOVE.L	PISA,A1
+	MOVE.L	PESA,A2
+	MOVE.L	#BSA,D3
+	ADD.L	#2000,D3	* Fin del buffer
+	CMP.L	A1,A2		* Ambos punteros estan en el inicio, con lo que el buffer esta vacio
+	BEQ	VACIO
+
+	MOVE.B	(A2)+,D0	* Guardamos en D0 el caracter a leer y avanzamos el puntero de extraccion
+	MOVE.L	A2,PESA		* Avanzamos el puntero de extraccion borrando el caracter leido
+	CMP.L	D3,A2		* Comprobamos si hemos llegado al final del buffer(nos salimos)
+	BHI	REIPUNE0	* si es asi, reiniciamos el puntero de extraccion
+	BRA	FIN
+
+REIPUNE0:MOVE.L	#BSA,PESA
+	BRA	FIN
+
+RECB:	AND.L	#0,D0		* Inicializamos D0 a 0
+	MOVE.L	PISB,A1
+	MOVE.L	PESB,A2
+	MOVE.L	#BSB,D3
+	ADD.L	#2000,D3	* Fin del buffer
+	CMP.L	A1,A2		* Ambos punteros estan en el inicio, con lo que el buffer esta vacio
+	BEQ	VACIO
+
+	MOVE.B	(A2)+,D0	* Guardamos en d0 el caracter a leer y avanzamos el puntero de extraccion
+	MOVE.L	A2,PESB		* Avanzamos el puntero de extraccion borrando el caracter leido
+	CMP.L	D3,A2		* Comprobamos si hemos llegado al final del buffer(nos salimos)
+	BHI	REIPUNE1	* si es asi, reiniciamos el puntero de extraccion
+	BRA	FIN
+
+REIPUNE1:	MOVE.L	#BSB,PESB
+	BRA	FIN
+	
+TRANSA: AND.L	#0,D0		* Inicializamos D0 a 0
+	MOVE.L	PIPA,A1
+	MOVE.L	PEPA,A2
+	MOVE.L	#BEA,D3
+	ADD.L	#2000,D3	* Fin del buffer
+	CMP.L	A1,A2		* Ambos punteros estan en el inicio, con lo que el buffer esta vacio
+	BEQ	VACIO
+
+	MOVE.B	(A2)+,D0	* Guardamos en D0 el caracter a leer y avanzamos el puntero de extraccion
+	MOVE.L	A2,PEPA		* Avanzamos el puntero de extraccion borrando el caracter leido
+	CMP.L	D3,A2		* Comprobamos si hemos llegado al final del buffer(nos salimos)
+	BHI	REIPUNE2	* si es asi, reiniciamos el puntero de extraccion
+	BRA	FIN
+
+REIPUNE2:	MOVE.L	#BEA,PEPA
+	BRA	FIN
+	
+TRANSB: AND.L	#0,D0		* Inicializamos D0 a 0
+	MOVE.L	PIPB,A1
+	MOVE.L	PEPB,A2
+	MOVE.L	#BEB,D3
+	ADD.L	#2000,D3	* Fin del buffer
+	CMP.L	A1,A2		* Ambos punteros estan en el inicio, con lo que el buffer esta vacio
+	BEQ	VACIO
+
+	MOVE.B	(A2)+,D0	* Guardamos en D0 el caracter a leer y avanzamos el puntero de extraccion
+	MOVE.L	A2,PEPB		* Avanzamos el puntero de extraccion borrando el caracter leido
+	CMP.L	D3,A2		* Comprobamos si hemos llegado al final del buffer(nos salimos)
+	BHI	REIPUNE3	* si es asi, reiniciamos el puntero de extraccion
+	BRA	FIN
+
+REIPUNE3:MOVE.L	#BEB,PEPB
+	BRA	FIN
+	
+VACIO:	ADD.L 	#$FFFFFFFF,D0  	* devolvemos el valor indicado
+FIN:	MOVE.L	(A7)+,A1
+	MOVE.L	(A7)+,A2
+	MOVE.L	(A7)+,D1
+	MOVE.L	(A7)+,D3
+	RTS
+	
+**************************** FIN LEECAR *********************************************************
+
+**************************** ESCCAR *************************************************************
+	
+	
+ESCCAR:	MOVE.L	A1,-(A7)
+	MOVE.L	A2,-(A7)
+	MOVE.L	D3,-(A7)
+	MOVE.L	D4,-(A7)
+	MOVE.L	D1,-(A7)
+	
+	AND.L   #3,D0         	* Limpiamos la parte superior de D0
+	CMP.B   #0,D0         	* Comparamos con 0, si son iguales, salta al buffer correspondiente.
+	BEQ     BUF0
+        CMP.B   #1,D0      	* Comparamos con 1, si son iguales, salta al buffer correspondiente.
+	BEQ     BUF1
+	CMP.B   #2,D0         	* Mismo procedimiento
+	BEQ     BUF2          	* Con 2 y 3.
+	CMP.B   #3,D0	
+	BEQ     BUF3
+	
+BUF0:   MOVE.L	PISA,A1         *Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PESA,A2
+	MOVE.L  #BSA,D3		
+	ADD.L	#2000,D3	* Cargamos en D3 la ultima direccion del buffer
+	CMP.L	D3,A1		* Comprobamos si el puntero de insercion esta al final del buffer
+	BNE	SIGUE0		* Si no esta al final, saltamos a SIGUE0
+	CMP.L	#BSA,A2		* Si el puntero de extraccion esta al comienzo y el de insercion al final, el buffer esta lleno.
+	BEQ	BFULL
+SIGUE0:	MOVE.L  PESA,D4		* Comprobamos si PISA esta justo detras de PESA, y por tanto que el bucle esta lleno
+	SUB.L	#1,D4		
+	CMP.L   A1,D4  		* Si el buffer esta lleno, saltamos directamente a BFULL.
+	BEQ 	BFULL
+	MOVE.B  D1,(A1)+        * Escribimos en el buffer el valor guardado en D1.
+	MOVE.L  A1,PISA         * Avanzamos el puntero del buffer.
+	MOVE.L  #0,D0           * Cargamos en D0 el valor 0.
+	CMP.L	A1,A2		* Comprobamos si el puntero de insercion ha alcanzado al de extraccion,
+	BEQ	RETI0		* en cuyo caso, el de insercion retrocede una posicion para insertar el siguiente caracter.
+	CMP.L	D3,A1		* Comprobamos si al escribir, hemos llegado al final del buffer(nos salimos)
+	BHI	RPI0		* Si es asi, reiniciamos el puntero de insercion
+	BRA	FIN2
+RPI0:	MOVE.L	#BSA,PISA	* PISA vuelve al inicio del buffer
+	BRA	FIN2
+RETI0:	MOVE.L -(A1),PISA	* Retrocedemos una posicion el puntero de insercion
+	BRA     FIN2
+
+	
+BUF1:   MOVE.L	PISB,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PESB,A2
+	MOVE.L  #BSB,D3
+	ADD.L	#2000,D3
+	CMP.L	D3,A1		* Comprobamos si el puntero de insercion esta al final del buffer.
+	BNE	SIGUE1		* Si no esta al final, saltamos a SIGUE0.
+	CMP.L	#BSB,A2		* Si el puntero de extraccion esta al comienzo y el de insercion al final, el buffer esta lleno.
+	BEQ	BFULL
+SIGUE1:	MOVE.L  PESB,D4		* Comprobamos si PISB esta justo detras de PESB, y por tanto que el bucle esta lleno.
+	SUB.L	#1,D4		
+	CMP.L   A1,D4  		* Si el buffer esta lleno, saltamos directamente a BFULL.
+	BEQ 	BFULL
+	MOVE.B  D1,(A1)+        * Escribimos en el buffer el valor guardado en D1 e incrementamos A1.
+	MOVE.L  A1,PISB         * Avanzamos el puntero del buffer.
+	MOVE.L  #0,D0           * Cargamos en D0 el valor 0.
+	CMP.L	A1,A2		* Comprobamos si el puntero de insercion ha alcanzado al de extraccion.
+	BEQ	RETI1		* En cuyo caso, el de insercion retrocede una posicion para insertar el siguiente caracter.
+	CMP.L	D3,A1		* Comprobamos si al escribir, hemos llegado al final del buffer(nos salimos).
+	BHI	RPI1		* Si es asi, reiniciamos el puntero de insercion.
+	BRA	FIN2
+RPI1:	MOVE.L	#BSB,PISB	* PISB vuelve al inicio del buffer.
+	BRA	FIN2	
+RETI1:	MOVE.L -(A1),PISB	* Retrocedemos una posicion el puntero de insercion.
+	BRA     FIN2
+
+	
+BUF2:   MOVE.L	PIPA,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PEPA,A2
+	MOVE.L  #BEA,D3
+	ADD.L	#2000,D3
+	CMP.L	D3,A1		*Comprobamos si el puntero de insercion esta al final del buffer
+	BNE	SIGUE2		*Si no esta al final, saltamos a SIGUE0
+	CMP.L	#BEA,A2		*Si el puntero de extraccion esta al comienzo y el de insercion al final, el buffer esta lleno.
+	BEQ	BFULL
+SIGUE2:	MOVE.L  PEPA,D4		*Comprobamos si PIPA esta justo detras de PEPA, y por tanto que el bucle esta lleno
+	SUB.L	#1,D4		
+	CMP.L   A1,D4  		*Si el buffer esta lleno, saltamos directamente a BFULL.
+	BEQ 	BFULL
+	MOVE.B  D1,(A1)+        * Escribimos en el buffer el valor guardado en D1.
+	MOVE.L  A1,PIPA         * Avanzamos el puntero del buffer.
+	MOVE.L  #0,D0           * Cargamos en D0 el valor 0.
+	CMP.L	A1,A2		* Comprobamos si el puntero de insercion ha alcanzado al de extraccion. 
+	BEQ	RETI2		* En cuyo caso, el de insercion retrocede una posicion para insertar el siguiente caracter.
+	CMP.L	D3,A1		* Comprobamos si al escribir, hemos llegado al final del buffer(nos salimos)
+	BHI	RPI2		* Si es asi, reiniciamos el puntero de insercion
+	BRA	FIN2
+RPI2:	MOVE.L	#BEA,PIPA	* PIPA vuelve al inicio del buffer
+	BRA	FIN2
+RETI2:	MOVE.L -(A1),PIPA	* Retrocedemos una posicion el puntero de insercion
+	BRA     FIN2
+
+	
+BUF3:   MOVE.L	PIPB,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PEPB,A2
+	MOVE.L  #BEB,D3
+	ADD.L	#2000,D3
+	CMP.L	D3,A1		*Comprobamos si el puntero de insercion esta al final del buffer
+	BNE	SIGUE3		*Si no esta al final, saltamos a SIGUE3
+	CMP.L	#BEB,A2		*Si el puntero de extraccion esta al comienzo y el de insercion al final, el buffer esta lleno.
+	BEQ	BFULL
+SIGUE3:	MOVE.L  PEPB,D4		*Comprobamos si PIPB esta justo detras de PEPB, y por tanto que el bucle esta lleno
+	SUB.L	#1,D4		
+	CMP.L  	A1,D4  		*Si el buffer esta lleno, saltamos directamente a BFULL.
+	BEQ 	BFULL
+	MOVE.B  D1,(A1)+        * Escribimos en el buffer el valor guardado en D1.
+	MOVE.L  A1,PIPB         * Avanzamos el puntero del buffer.
+	MOVE.L  #0,D0           * Cargamos en D0 el valor 0.
+	CMP.L	A1,A2		* Comprobamos si el puntero de insercion ha alcanzado al de extraccion.
+	BEQ	RETI3		* En cuyo caso, el de insercion retrocede una posicion para insertar el siguiente caracter.
+	CMP.L	D3,A1		* Comprobamos si al escribir, hemos llegado al final del buffer(nos salimos)
+	BHI	RPI3		* Si es asi, reiniciamos el puntero de insercion
+	BRA	FIN2
+RPI3:	MOVE.L	#BEB,PIPB	* PIPB vuelve al inicio del buffer
+	BRA	FIN2
+RETI3:	MOVE.L -(A1),PIPB	* Retrocedemos una posicion el puntero de insercion
+	BRA     BFULL
+BFULL:	MOVE.L  #$FFFFFFFF,D0   * Al estar lleno, cargamos en D0 el valor hexadecimal 0xFFFFFFFF.
+FIN2:	MOVE.L	(A7)+,D1
+	MOVE.L	(A7)+,D4
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,A2
+	MOVE.L	(A7)+,A1
+	RTS
+
+**************************** FIN ESCCAR *********************************************************
+
+**************************** LINEA *************************************************************
+	
+	
+LINEA	MOVE.L	A1,-(A7)
+	MOVE.L	A2,-(A7)
+	MOVE.L	D1,-(A7)
+	MOVE.L	D3,-(A7)
+	MOVE.L	D4,-(A7)
+	AND.L	#3,D0	        * Limpiamos la parte superior
+	CMP.B	#0,D0	        * Si es un 0, seleccionamos recepcion de la linea  A
+	BEQ	RECAL
+	CMP.B	#1,D0	        * Si es un 1, seleccionamos recepcion de la linea B
+	BEQ	RECBL
+	CMP.B	#2,D0	        * Si es un 2, seleccionamos transmision de la linea A
+	BEQ	TRANSAL
+	CMP.B	#3,D0	        * Si es un 3, seleccionamos transmision de la linea B
+	BEQ	TRANSBL
+	
+RECAL:  MOVE.L	#0,D3	        * Contador inicializado a 0
+	MOVE.L	#0,D1	        * Registro para guardar el caracter apuntado en cada momento
+	MOVE.L  #BSA,D4         * Guardamos en D4 el valor de la direccion del final del buffer
+	ADD.L   #2000,D4        *
+	MOVE.L	PISA,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones
+	MOVE.L	PESA,A2
+	* Ambos punteros coinciden, con lo que el buffer esta vacio o no tiene lineas 
+BUCAL:	CMP.L	A1,A2	        * Comprobamos que el puntero de extraccion no haya alcanzado al de insercion
+	BEQ	ZERO
+	MOVE.B	(A2)+,D1	* Metemos el 1er caracter en D1 y avanzamos al siguiente caracter de A2
+	ADD.L	#1,D3	        * Incrementamos el contador de elementos de la lÃ­nea
+	CMP.L   D4,A2           * Comprobamos si hemos llegado al final del buffer
+	BLS     NECAL           * Si no hemos llegado al final, no reiniciamos ptr. al inicio del buffer y saltamos
+	MOVE.L  #BSA,A2         * Si hemos llegado al final, colocamos puntero al principio del buffer	
+NECAL:  CMP.B	#13,D1	        * Comprobamos si el caracter  es el retorno de carro
+	BEQ	ES13	        * Acabamos devolviendo en D0 el contenido de D3
+	BRA	BUCAL
+	
+RECBL:  MOVE.L	#0,D3	        * Contador inicializado a 0
+	MOVE.L	#0,D1	        * Registro para guardar el caracter apuntado en cada momento
+	MOVE.L  #BSB,D4         * Guardamos en D4 el valor de la direccion del final del buffer
+	ADD.L   #2000,D4        *
+	MOVE.L	PISB,A1	        *Cargamos direcciones de ptros de buffer en registros de direcciones
+	MOVE.L	PESB,A2
+	* Ambos punteros coinciden, con lo que el buffer estÃ¡ vacÃ­o
+BUCBL:	CMP.L	A1,A2	        * Comprobamos que el puntero de extraccion no haya alcanzado al de insercion
+	BEQ	ZERO
+	MOVE.B	(A2)+,D1	* Metemos el 1er caracter en D1 y avanzamos al siguiente caracter de A2
+	ADD.L	#1,D3	        * Incrementamos el contador de elementos de la linea
+	CMP.L   D4,A2           * Comprobamos si hemos llegado al final del buffer
+	BLS     NECBL           * Si no hemos llegado al final, no reiniciamos ptr. al inicio del buffer y saltamos
+	MOVE.L  #BSB,A2         * Si hemos llegado al final, colocamos puntero al principio del buffer	
+NECBL:  CMP.B	#13,D1	        * Comprobamos si es el retorno de carro
+	BEQ	ES13	        * Acabamos devolviendo en D0 el contenido de D3
+	BRA	BUCBL	
+	
+TRANSAL:MOVE.L	#0,D3	        * Contador inicializado a 0
+	MOVE.L	#0,D1	        * Registro para guardar el caracter apuntado en cada momento
+	MOVE.L  #BEA,D4         * Guardamos en D4 el valor de la direccion del final del buffer
+	ADD.L   #2000,D4        *
+	MOVE.L	PIPA,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PEPA,A2
+				* Ambos punteros coinciden, con lo que el buffer esta vacio
+BUCAE:	CMP.L	A2,A1	        * Comprobamos que el puntero de extraccion no haya alcanzado al de insercion
+	BEQ	ZERO
+	MOVE.B	(A2)+,D1	* Metemos el 1er caracter en D1 y avanzamos al siguiente caracter de A2
+	ADD.L	#1,D3	        * Incrementamos el contador de elementos de la linea
+	CMP.L     D4,A2         * Comprobamos si hemos llegado al final del buffer
+	BLS     NECAE           * Si no hemos llegado al final, no reiniciamos ptr. al inicio del buffer y saltamos
+	MOVE.L  #BEA,A2         * Si hemos llegado al final, colocamos puntero al principio del buffer	
+NECAE:  CMP.B	#13,D1	        * Comprobamos si es el retorno de carro
+	BEQ	ES13
+	BRA	BUCAE
+
+TRANSBL:MOVE.L	#0,D3	        * Contador inicializado a 0
+	MOVE.L	#0,D1	        * Registro para guardar el caracter apuntado en cada momento
+	MOVE.L  #BEB,D4         * Guardamos en D4 el valor de la direccion del final del buffer
+	ADD.L   #2000,D4        *
+	MOVE.L	PIPB,A1         * Cargamos direcciones de ptros de buffer en registros de direcciones.
+	MOVE.L	PEPB,A2
+	
+BUCBE:	CMP.L	A2,A1	        * Comprobamos que el puntero de extraccion no haya alcanzado al de insercion
+	BEQ	ZERO
+	MOVE.B	(A2)+,D1	* Metemos el 1er caracter en D1 y avanzamos al siguiente caracter de A2
+	ADD.L	#1,D3	        * Incrementamos el contador de elementos de la linea
+	CMP.L     D4,A2           * Comprobamos si hemos llegado al final del buffer
+	BLS     NECBE           * Si no hemos llegado al final, no reiniciamos ptr. al inicio del buffer y saltamos
+	MOVE.L  #BEB,A2         * Si hemos llegado al final, colocamos puntero al principio del buffer	
+NECBE:  CMP.B	#13,D1	        * Comprobamos si es el retorno de carro
+	BEQ	ES13
+	BRA	BUCBE
+	* Ambos punteros coinciden, con lo que el buffer esta vacio
+ZERO:	MOVE.L	#0,D0	        * inicializamos a 0
+	MOVE.L	(A7)+,D4
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D1
+	MOVE.L	(A7)+,A2
+	MOVE.L	(A7)+,A1
+	RTS                     * Volvemos con D0 a 0
+	
+ES13:	MOVE.L	D3,D0	        * Metemos en D0, el resultado de D3(caracteres en la linea)
+	MOVE.L	(A7)+,D4
+	MOVE.L	(A7)+,D3
+	MOVE.L	(A7)+,D1
+	MOVE.L	(A7)+,A2
+	MOVE.L	(A7)+,A1
+	RTS                     * Volvemos con D0 = numero de caracteres en la linea 
+
+	**************************** FIN LINEA *********************************************************
+
+	*-----------------------Prueba Manual-----------------------------------------------------------------------------------------------
+	
+	******************Equivalencias Prueba********************************************************
+	
+*BUFFERP: DS.B 	2100 		* Buffer para lectura y escritura de caracteres
+*CONTL:	DC.W  	1 		* Contador de lineas
+*CONTC:	DC.W  	1001		* Contador de caracteres
+*DIRLEC:	DC.L	5000		* Direccion de lectura para SCAN
+*DIRESC:	DC.L	5000		* Direccion de escritura para PRINT
+*TAME:	DC.W	1001 		* Tamanio escritura PRINT
+*DESA:	EQU	0		* Descriptor linea A
+*DESB:	EQU	1		* Descrptor linea B
+*NLIN:	EQU	1		* Numero lineas a leer
+*TAML:	EQU	1001		* Tam linea SCAN
+*TAMB:	EQU	1001		* Tam bloque PRINT
+
+*PRUEBAS:	*manejadores de excepciones
+*	MOVE.L	#BUS_ERROR,8	* Bus error handler
+*	MOVE.L	#ADDRESS_ER,12	*Address error handler
+*	MOVE.L	#ILLEGAL_IN,16	*Illegal instruction handler
+*	MOVE.L	#PRIV_VIOLT,32	*Privilege violation handler
+
+*	BSR 	INIT
+	
+*	MOVE.W	#$2000,SR	* Permite interrupciones
+
+*	MOVE.L  #0,D6
+*	MOVE.L	#BUFFERP,A5	
+*BS:	MOVE.B	#$31,(A5)+
+*	MOVE.B	#$32,(A5)+
+*	MOVE.B	#$33,(A5)+
+*	MOVE.B	#$34,(A5)+
+*	MOVE.B	#$35,(A5)+
+*	MOVE.B	#$36,(A5)+
+*	MOVE.B	#$37,(A5)+
+*	MOVE.B	#$38,(A5)+
+*	MOVE.B	#$39,(A5)+
+*	MOVE.B	#$30,(A5)+
+*	ADD.L	#1,D6
+*	CMP.L	#190,D6
+*	BNE	BS	
+*	MOVE.B	#13,(A5)
+
+*	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+*	MOVE.W	#1901,-(A7)
+*	MOVE.W	#1,-(A7)
+*	MOVE.L	DIRLEC,-(A7)
+*	BSR	PRINT
+*	BREAK
+	
+*BUCPR:	MOVE.W	#0,CONTC	* Inicializa contador de caracteres
+*	MOVE.W	#NLIN,CONTL	* Inicializa contadore de Lineas
+*	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+*OTRAL:	MOVE.W	#TAML,-(A7)	* Tamanio maximo de la linea
+*	MOVE.W	#DESA,-(A7)	* Puerto A
+*	MOVE.L	DIRLEC,-(A7)	* Direccion de lectura
+*ESPL:	BSR 	SCAN
+*	CMP.L	#0,D0
+*	BEQ	ESPL		* Si no se ha leido una linea se intenta de nuevo
+*	ADD.L	#8,A7		* Restablece la pila
+*	ADD.L	D0,DIRLEC	* Calcula la nueva direccion de lectura
+*	ADD.W	D0,CONTC	* Actualiza el numero de caracteres leidos
+*	SUB.W	#1,CONTL	* Actualiza el numero de lineas leidas
+*	BNE	OTRAL		* Se han leido todas la lineas se vuelve a leer
+
+*	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+*OTRAE:	MOVE.W	#TAMB,TAME	* Tamanio de escritura = Tamanio de bloque
+*ESPE:	MOVE.W	TAME,-(A7)	* Tamanio de escritura
+*	MOVE.W	#DESB,-(A7)	* Puerto B
+*	MOVE.L	DIRLEC,-(A7)	* Direccion de lectura
+*	BSR	PRINT
+*	ADD.L	#8,A7		* Restablece la pila
+**	ADD.L	D0,DIRLEC	* Calcula la nueva direccion del buffer
+*	SUB.W	D0,CONTC	* ACtualiza el contador de caracteres
+*	BEQ	SALIR		* Si no quedan caracteres se acaba
+*	SUB.W	D0,TAME		* Actualiza el tamanio de escritura
+*	BNE	ESPE		* Si no se ha escrito todo el bloque se insiste
+*	CMP.W	#TAMB,CONTC	* Si el nº de caracteres que quedan es menor que el
+				* tamanio establecido se transmite ese numero
+
+*	BHI	OTRAE		* Siguiente bloque
+*	MOVE.W	CONTC,TAME
+*	BRA 	ESPE		* Siguiente bloque
+
+*SALIR:	BRA	BUCPR
+
+*FINPR:	BREAK
+	
+*BUS_ERROR:
+*	BREAK			*Bus error handler
+*	NOP
+*ADDRESS_ER:
+*	BREAK			*Bus error handler
+*	NOP
+*ILLEGAL_IN:
+*	BREAK			*Illegal instruction handler
+*	NOP
+*PRIV_VIOLT:
+*	BREAK			*Privilege violation handler
+*	NOP
+*------------------------------------------------pr22es_int---------------------------------------------------------------------------------
+*		MOVE.L	#0,D5	*Contador
+*PR22:		MOVE.L	#1,D0
+*		MOVE.L  #0,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*  		MOVE.L	#1,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*  		MOVE.L	#2,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#3,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#4,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#5,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#6,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#7,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#8,D1
+*		BSR ESCCAR
+*		MOVE.L	#1,D0
+*   		MOVE.L	#9,D1
+*		BSR ESCCAR
+*		ADD.L	#1,D5
+*		CMP.L	#100,D5
+*		BNE	PR22
+*		MOVE.L	#1,D0
+*		MOVE.L	#13,D1
+*		BSR	ESCCAR *Escribimos el retorno de carro para finalizar linea de 1000 caracteres
+*		MOVE.L	#1,D0
+*		BSR	LINEA
+*		BREAK
+	
+*---------------------------------------------------------FIN pr22es_int-----------------------------------------------------------------------------------------------------------------------------
+	
+*INF:		MOVE.L	#0,D0
+*		BSR LINEA
+*		CMP.L	#0,D0
+*		BEQ	INF
+
+*		MOVE.W  D0,-(A7) *Tamanio
+*		MOVE.W  #0,-(A7)  *Descriptor
+*		MOVE.L  #$5000,-(A7) *Buffer
+
+*		BSR SCAN
+*		BREAK
+	
+*		MOVE.L  #0,D5   *contador para salir del bucle 
+*BUCPRU:		MOVE.L  #0,D0	*Para probar SCAN escribiendo en las lineas de comandos del bsvc
+*		MOVE.L  #$61,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*  		MOVE.L	#$62,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*  		MOVE.L	#$63,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$64,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$65,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$66,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$67,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$68,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$69,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6A,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6B,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6C,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6D,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6E,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$6F,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$70,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$71,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$72,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$73,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+*   		MOVE.L	#$74,D1
+*		BSR ESCCAR
+*		ADD.L 	#1,D5
+*		CMP.L 	#50,D5
+*		BEQ	FUERAB
+*		BRA 	BUCPRU
+	
+*FUERAB:		MOVE.L	#0,D0
+*   		MOVE.L	#13,D1
+*		BSR ESCCAR
+	
+*		MOVE.W  #1001,-(A7) *Tamanio
+*		MOVE.W  #0,-(A7)  *Descriptor
+*		MOVE.L  #$5000,-(A7) *Buffer
+
+*		BSR SCAN
+*		BREAK
+		
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000000,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000001,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000002,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000003,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000004,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000005,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000006,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000007,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000008,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$00000009,D1
+*		BSR ESCCAR
+*		MOVE.L	#0,D0
+ *   		MOVE.L	#$0000000D,D1
+*		BSR ESCCAR
+	
+*		MOVE.W  #11,-(A7) *Tamanio
+*		MOVE.W  #0,-(A7)  *Descriptor
+*		MOVE.L  #$5000,-(A7) *Buffer
+	
+*		BSR SCAN
+*		BREAK
+*		MOVE.L	#0,D0
+*     		MOVE.L	#$00000002,D1
+*		BSR ESCCAR
+*		MOVE.L	PISA,A1         *Cargamos direcciones de ptros de buffer en registros de direcciones.
+*		MOVE.L	PESA,A2
+*		MOVE.L	#BSA,D3
+*	ADD.L	#2000,D3
+*	MOVE.L	#BSA,D4
+*	ADD.L	#500,D4
+	
+*		MOVE.L 	D1,(A1)
+*		MOVE.L  A1,PISB
+*		MOVE.L	#1,D0
+*		BSR 	LINEA
+*		BREAK
+
+*	MOVE.L  D4,A2
+*	MOVE.L 	D3,A1
+*	MOVE.L	A1,PISA
+*	MOVE.L	A2,PESA
+	*Terminar bucle para esccar y luego volver a prepararlo para leecar. cuando se termina de escribir en A1 hay que variar el buffer de escritura para que no de vacÃ­o.
+*		MOVE.L #$31,(A1)+
+*		MOVE.L #$31,(A1)+
+* 		MOVE.L	#$00000000,D0
+*		MOVE.L	#$00000001,D1
+*		BSR 	ESCCAR
+*		MOVE.L	#$00000000,D0
+*      		BSR	LEECAR
+*		BREAK
+*		MOVE.L	#$00000001,D0
+*		BSR     LEECAR
+*		BREAK
+*PRUEBAS:	BSR	INIT
+*		MOVE.L	#$00000001,D0
+*		BSR	LEECAR
+*		BREAK
+*PRUEBAS:	BSR INIT
+*	MOVE.L #0,D4
+*BUCPRUEBA:	MOVE.L #$00000001,D0
+*		MOVE.L #$00000005,D1
+*	BSR ESCCAR
+*	ADD #1,D4
+*	CMP #2200,D4
+*	BEQ LEER
+*	BRA BUCPRUEBA
+*LEER:	MOVE.L #$00000001,D0
+*	BSR LEECAR
+*	SUB  #1,D4
+*	CMP #0,D4
+*	BEQ BREAK
+*	BRA LEER
+*BREAK:	BREAK
+*PRUEBAS:	BSR INIT
+*	MOVE.L #0,D4	
+*BUCPRUEBA:	MOVE.L #$00000003,D0
+*		MOVE.L #$00000005,D1
+*	BSR ESCCAR
+*	ADD #1,D4
+*	CMP #2200,D4
+*	BEQ LEER
+*	BRA BUCPRUEBA
+*LEER:	MOVE.L #$00000003,D0
+*	BSR LEECAR
+*	SUB  #1,D4
+*	CMP #0,D4
+*	BEQ BREAK
+*	BRA LEER
+*
+*BREAK:	BREAK
+	
+*PRUEBAS:	MOVE.B	,
+
+
+*PRUEBAS:	BSR		INIT					*Inicia el controlador
+*		MOVE.W 	#$2000,SR				
+******************************************VOY A ASEGURARME CON UN BUCLE, QUE PUEDE HACER 2000 INSERCIONES DE a's
+****************************************** DOBLE DEBBUGEO. HACER BUCLE QUE FUNCIONE BIEN Y QUE REALICE LAS INSERCIONES BIEN					
+*		AND.L	#2000,D7				*CONTADOR PAL BUCLE
+*		MOVE.W	#$0be2,A5				*AquÃ­ vamos a cargar lo leido
+*		MOVE.L	#BUS_ERROR,8			*handler bus error
+*		MOVE.L	#ADDRESS_ER,12			*
+*		MOVE.L	#ILLEGAL_IN,16			*
+*		MOVE.L	#PRIV_VIOLT,32			*
+*		MOVE.L	#ILLEGAL_IN,40			*
+*		MOVE.L	#ILLEGAL_IN,44			*
+*		LEA		EVEN,A0					*
+*		ADDQ.L	#1,A0					*
+*		CLR.W	(A0)					*Generate an address error exception
+*		JMP		LOOPESC
+
+*EVEN:
+*		DS.W	1						*Reserve one word for even
+*BUS_ERROR:
+*		BREAK
+*		NOP
+*ADDRESS_ER: 
+*		BREAK
+*		NOP
+*ILLEGAL_IN: 
+*		BREAK
+*		NOP
+*PRIV_VIOLT: 
+*		BREAK
+*		NOP
+
+*LOOPESC:
+*		MOVE.W	#$0be2,A4
+*		MOVE.W	#0,D3
+*BUCLEPR:
+*		MOVE.B	#$31,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$32,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$33,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$34,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$35,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$36,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$37,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$38,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$39,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#$30,(A4,D3)
+*		ADD.W	#1,D3
+*		MOVE.B	#13,(A4,D3)
+*		ADD.W	#1,D3
+*		CMP.W	#1000,D3
+*		BLT		BUCLEPR
+*		
+*		MOVE.W	#1000,-(A7)
+*		MOVE.W	#0,-(A7)
+*		MOVE.L	#$0be2,-(A7)
+*		BSR		PRINT					*QUE DIOS NOS COJA CONFESAOS.
+*		MOVE.W	#0,D3
+*		MOVE.W	#PIPA,A3
+*		MOVE.W	#PEPA,A2
+*BUC1:
+*		MOVE.W	(A3),D0
+*		MOVE.W	(A2),D1
+*		CMP.W	D0,D1
+*		BNE		BUC1
+*		MOVE.L	(A7)+,D7
+*		MOVE.L	#$0be2,-(A7)
+*		BSR		PRINT					*QUE DIOS NOS COJA CONFESAOS.
+*		MOVE.W	#0,D3
+*BUC2:
+*		MOVE.W	(A3),D0
+*		MOVE.W	(A2),D1
+*		CMP.W	D0,D1
+*		BNE		BUC2
+*		MOVE.L	(A7)+,D0
+*		MOVE.L	#$0be2,-(A7)
+*		BSR		PRINT					*QUE DIOS NOS COJA CONFESAOS.
+*		MOVE.L	(A7)+,D0
+*		MOVE.W	(A7)+,D0
+*		MOVE.W	(A7)+,D0
+
+*LOOPLEC:
+*		JMP		LOOPLEC
+*		BREAK
+*		NOP

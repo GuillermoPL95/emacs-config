@@ -1,0 +1,106 @@
+#include "editor.h"
+#include "comun.h"
+#include "edsu_comun.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <error.h>
+
+int generar_evento(const char *tema, const char *valor) {
+  
+  //char *n;
+  int sockfd, puerto, n;
+  char *servidor, respuesta[50];
+  struct mensaje *msg;
+  struct sockaddr_in inter_addr; 
+  struct hostent *server;
+  /* Obtener puerto y servidor de las variables de entorno */
+  puerto = atoi(getenv("PUERTO"));
+  servidor = getenv("SERVIDOR");
+  
+  /* Montar conexión TCP con servidor */ 
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  
+  if(sockfd < 0){
+    perror ("Error opening socket");
+    return -1 ;
+  }
+  
+  server = gethostbyname(servidor);
+  if (server == NULL){
+    fprintf(stderr,"ERROR, no such host\n");
+    exit(0);
+  }
+  
+  bzero((char *) &inter_addr, sizeof(inter_addr));
+  
+  inter_addr.sin_family = AF_INET;
+  bcopy((char *)server->h_addr, 
+         (char *)&inter_addr.sin_addr.s_addr,
+         server->h_length);
+  inter_addr.sin_port = htons(puerto);
+  
+  /*Connect*/
+  if (connect(sockfd,(struct sockaddr *)&inter_addr,sizeof(inter_addr)) < 0){
+        perror("ERROR connecting");
+	return -1;
+  }
+  
+  /*Envío de solicitud*/
+
+  msg->tema = tema;
+  if((n = enviarMensaje(sockfd, "Recepción de evento")) < 0){
+    return -1;
+  }
+  /*Respuesta del intermediario*/
+  if((n = recibirMensaje(sockfd, respuesta)) < 0){
+    return -1;
+  }
+  if((strcmp(respuesta, "Solicitud tema")) != 0){
+    return -1;
+  }
+  /*Se envía el tema del evento*/
+  if((n = enviarMensaje(sockfd, tema)) < 0){
+    return -1;
+  }
+  /*¿Existe el tema?*/
+  if((n = recibirMensaje(sockfd, respuesta)) < 0){
+    return -1;
+  }
+  if((strcmp(respuesta, "Error: el tema no existe")) == 0){
+    /*Si no existe, error y finalizamos.*/
+    return -1;
+  }
+  /*Si existe, enviamos el evento*/
+  if((n = enviarMensaje(sockfd, valor)) < 0){
+    return -1;
+  }
+  /*Confirmación del intermediario de envío del evento*/
+  if((n = recibirMensaje(sockfd, respuesta)) < 0){
+    return -1;
+  }
+  if((strcmp(respuesta, "Evento enviado")) != 0){
+    /*Si no existe, error y finalizamos.*/
+    return -1;
+  }
+  /*La operación se ha llevado a cabo con éxito.*/
+  close(sockfd);
+  return 0;
+}
+
+/* solo para la version avanzada */
+int crear_tema(const char *tema) {
+	return 0;
+}
+
+/* solo para la version avanzada */
+int eliminar_tema(const char *tema) {
+	return 0;
+}
+
+int montarSocket(int socket){}

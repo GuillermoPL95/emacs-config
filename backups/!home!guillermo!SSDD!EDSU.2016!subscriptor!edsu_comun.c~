@@ -1,0 +1,62 @@
+/*
+   Incluya en este fichero todas las implementaciones que pueden
+   necesitar compartir los módulos editor y subscriptor,
+   si es que las hubiera.
+*/
+
+#include "edsu_comun.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <error.h>
+
+
+int makeConnection(int sockfd){
+
+  int puerto;
+  char *servidor;
+  struct sockaddr_in inter_addr; 
+  struct hostent *server;
+  
+  /* Montar conexión TCP con servidor */ 
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+  if(socket < 0){
+    perror ("Error opening socket");
+    return -1 ;
+  }
+  
+  /* Obtener puerto y servidor de las variables de entorno */
+  puerto = atoi(getenv("PUERTO"));  
+  servidor = getenv("SERVIDOR");
+  server = gethostbyname(servidor);
+
+  
+  if (server == NULL){
+    fprintf(stderr,"ERROR, no such host\n");
+    close(sockfd);
+    return -1;
+  }
+  
+  bzero((char *) &inter_addr, sizeof(inter_addr));
+  
+  inter_addr.sin_family = AF_INET;
+  bcopy((char *)server->h_addr, 
+	(char *)&inter_addr.sin_addr.s_addr,
+	server->h_length);
+  inter_addr.sin_port = htons(puerto);
+  
+  /*Conectar a servidor*/
+  if (connect(sockfd, (struct sockaddr *)&inter_addr, sizeof(inter_addr)) < 0){
+    perror("ERROR connecting");
+    close(sockfd);
+    return -1;
+  }
+  /*Exito*/
+  return 0;
+}

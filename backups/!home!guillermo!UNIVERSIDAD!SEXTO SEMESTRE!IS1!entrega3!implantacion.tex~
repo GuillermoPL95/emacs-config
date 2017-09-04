@@ -1,0 +1,96 @@
+% Created 2017-05-26 vie 09:36
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Guillermo Paredes López, v130230 \\
+Andrés Cardozo Blanco, w140032 \\
+Agustín Giménez Ibáñez, u120198 \\
+Álvaro Jiménez Paniagua, u120263 \\
+}
+\date{\today}
+\title{IMPLANTACIÓN MODELO CONCEPTUAL}
+\hypersetup{
+ pdfauthor={Guillermo Paredes López, v130230 \\
+Andrés Cardozo Blanco, w140032 \\
+Agustín Giménez Ibáñez, u120198 \\
+Álvaro Jiménez Paniagua, u120263 \\
+},
+ pdftitle={IMPLANTACIÓN MODELO CONCEPTUAL},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\newline
+\newpage
+\section{INTRODUCCIÓN}
+\label{sec:orgd371177}
+Esta documentación explica la implantación de la arquitectura modelizada para aplicaciones web, especificando sus componentes
+y la interacción entre ellos a través de diagramas físicos y lógicos. La implantación se ha realizado basándonos en
+un modelo de elaboración de programas de estudio.
+
+\section{DEFINICIÓN DE LA IMPLANTACIÓN}
+\label{sec:orgd579ea0}
+\subsection{Descripción del propósito del sistema}
+\label{sec:org5b1f1bb}
+El sistema se encarga de elaborar diversos programas de estudio mediante un formulario, almacenando los programas creados en una
+base de datos. Este sistema sigue el modelo vista/controlador, por lo que existen una serie de componentes controlador que se encargan tanto
+de acceder a los modelos de programa creados por los usuarios como de manejar la representación de los mismos mediante una representación html.
+Estas acciones se realizan en función del tipo de solicitud realizada por los usuarios al sistema.
+Los componentes controlador también se encargan de la interacción con la base de datos, a través de un objeto manejador de la interacción. \newline
+El sistema ha sido diseñado de manera local mediante el framework Ruby on Rails. Una vez puesto en marcha el servidor, se accede al servicio web mediante
+introduciendo la dirección \url{http://localhost:3000/study_programs}.
+
+\subsection{Tabla de emparejamiento}
+\label{sec:org391abb9}
+La tabla de emparejamiento es la siguiente
+\\
+
+\begin{table}[h]
+\centering
+\begin{tabular}[h]{|l|l|}
+\hline
+\textbf{Componente} & \textbf{Capa}       \\ \hline
+study\_programs\_controller.rb & controlador \\ \hline
+study\_programs.coffe          & vista \\ \hline
+study\_programs.css            & vista \\ \hline
+study\_programs/index.html.erb & vista       \\ \hline
+database.yml                   & tabla       \\ \hline
+study\_program.rb              & modelo      \\ \hline
+routes.rb                      & controlador \\ \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Diagramas UML}
+\label{sec:orgfe1867e}
+Los diagramas UML son los siguientes:
+\subsubsection{Perspectiva física}
+\label{sec:org61b98f0}
+\begin{center}
+\includegraphics[width=.9\linewidth]{./DiagramaFisicoImplantacion.jpg}
+\end{center}
+\subsubsection{Perspectiva lógica}
+\label{sec:orga5ad44c}
+\begin{center}
+\includegraphics[width=.9\linewidth]{./DiagramaLogicoImplantacion.jpg}
+\end{center}
+\section{CONCLUSIONES}
+\label{sec:org20bfc8b}
+\end{document}

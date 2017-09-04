@@ -1,0 +1,394 @@
+#include <stdio.h>
+#include "comun.h"
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <error.h>
+#include <fcntl.h>
+
+#define ALTA 0
+#define BAJA 1
+#define EVENTO 2
+/*
+  Estructuras para las listas de nodos de temas y subscriptores.
+  El sistema de estructura de datos se diseña de esta manera para
+  permitir la inclusión y eliminación dinámica de nodos.
+*/
+typedef struct subscriber{
+  char name[50];
+  char host[50];
+  struct subscriber *next;
+} subscriptor;
+
+typedef struct theme{
+  char name[50];
+  char ip[20];
+  struct theme *next;
+  subscriptor *first;
+}tema;
+
+
+
+
+/*
+  Esta función busca si el tema recibido como mensaje existe.
+  Si existe devuelve un 0 y deja una estructura theme apuntando 
+  al nodo correspondiente de dicho tema. Si no existe, devuelve un -1.
+*/
+int buscarTema(char *tema, struct theme *PrimerTema, struct theme *existe);
+
+/*
+  Esta función busca el nodo subscriptor con la dirección dirSub
+  en la lista de nodos correspondiente.Si existe devuelve un 0, 
+  deja una estructura subscriber apuntando al nodo correspondiente 
+  de dicho subscriptor y otra estructura apuntando al anterior.
+  Si el cliente no está subscrito a ese tema, devuelve un -1.
+*/
+int buscarSubscriptor(char *dirSub, struct subscriber *primerSub,
+		      struct subscriber *existe,struct subscriber *anterior);
+
+/*
+  Esta función envía el evento pasado como entrada a todos los subscriptores 
+  del tema asociado al evento.
+*/
+int enviarEvento(char *evento, struct subscriber *primerSub);
+
+/*
+  Esta función añade un subscriptor a la lista de  del nodo tema correspondiente.
+*/
+void altaSubscriptor(struct theme *tema, char *hostname);
+
+/*
+  Esta función reserva espacio de memoria dinámica
+*/
+void *makeMem(size_t size);
+
+/*Añade un nodo tema*/
+void addTema (tema  **first, char *name);
+
+
+
+
+int main(int argc, char *argv[]) {
+
+  /*Declaración de variables*/
+  int sockfd, newsockfd, puerto, clilen, n, peticion; 
+  char buffer[50], *hostBuffer, *evento;
+  struct sockaddr_in self_addr, cli_addr;   
+  FILE *file;
+  msg_t msgAux; 
+  tema *headTheme, **primero, *currentT;
+  subscriptor *currentS, *anterior; 
+  
+  if (argc!=3) {
+    fprintf(stderr, "Uso: %s puerto fichero_temas\n", argv[0]);
+    return 1;
+  }
+
+  /*Inicialización de variables*/
+  headTheme = NULL;
+  bzero((char *) &currentT, sizeof(currentT));
+  bzero((char *) &currentS, sizeof(currentS));
+  bzero((char *) &anterior, sizeof(anterior));
+  bzero((char *) &msgAux, sizeof(msgAux));
+  
+  /*  currentT = makeMem(sizeof(tema));
+  currentS = makeMem(sizeof(subscriptor));
+  anterior = makeMem(sizeof(subscriptor));
+  msgAux = makeMem(sizeof(msg_t));*/
+  /* Leer todos los temas del fichero y crear la lista de nodos*/
+  file = fopen(argv[2], "r");
+  while(fgets(buffer, 50, file) != NULL){
+    /*Cada línea leída se copia en un nuevo nodo tema*/
+    /*headTheme = makeMem(sizeof(tema));    
+    strcpy(headTheme->name, buffer);
+    bzero(buffer, 50);
+    headTheme->next = *primero;
+    printf("hola\n");
+    *primero = headTheme;*/
+    /*El nuevo nodo es ahora el primero de la lista*/
+    addTema(&headTheme, buffer);
+  }
+  fclose(file);
+    
+  /*Establecemos la conexión TCP para escuchar peticiones*/
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  if(sockfd < 0){
+    perror("fallo al montar socket");
+    exit(1);
+  }
+  bzero((char *) &self_addr, sizeof(self_addr));
+  puerto = atoi(argv[1]);
+  
+  self_addr.sin_family = AF_INET;
+  self_addr.sin_port = htons(puerto);
+  self_addr.sin_addr.s_addr = INADDR_ANY;
+
+  if (bind(sockfd, (struct sockaddr *) &self_addr,sizeof(self_addr)) < 0){
+    perror("ERROR on binding");
+    exit(1);
+  }
+  /*El sistema ya escucha peticiones por el puerto*/
+  printf("Esperando conexión..\n");
+  listen(sockfd, 5);
+
+  
+  while(1/*Bucle de procesar peticiones*/){
+    
+    /*Programa en espera hasta recibir petición*/
+    clilen = sizeof(cli_addr);
+    if((newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr,(socklen_t *) &clilen)) < 0){
+      perror("error al recibir un mensaje");
+      close(newsockfd);
+      continue;
+    }
+    
+    /*Leemos el tipo de petición recibida*/
+    if((n = recibirMensaje(newsockfd, msgAux)) < 0){
+      continue;
+    }
+    
+    peticion = ntohl(msgAux.peticion);
+    
+    switch(peticion){
+      
+      /*Petición de ALTA DE UN SUBSCRIPTOR A UN TEMA*/
+      case ALTA :
+	        
+	/*Comprobamos si el tema solicitado existe*/
+	printf("solicitud de alta\n");
+	if((n=buscarTema(msgAux.tema, headTheme, currentT)) < 0){
+	  /*Si no exite, se manda mensaje de error a cliente.*/
+	  strcpy(msgAux.evento,"Error: el tema no existe");
+	  if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	    continue;	
+	  }
+	}
+	
+	/*Si existe, se lee el host del cliente y se añade un nuevo nodo*/
+	hostBuffer = msgAux.host;
+	altaSubscriptor(currentT, hostBuffer);
+
+	/*enviamos un mensaje de confirmación del alta y cerramos conexión con cliente*/
+	strcpy(msgAux.evento,"Alta finalizada");
+	if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	  continue;	
+	}
+	printf("Alta finalizada\n");
+	close(newsockfd);
+
+	
+     /*Petición de BAJA DE UN SUBSCRIPTOR DE UN TEMA*/
+     case BAJA:
+
+       /*Comprobamos si el tema solicitado existe*/
+       printf("solicitud de baja\n");	
+       if((n=buscarTema(msgAux.tema, headTheme, currentT)) < 0){
+	 /*Si no exite, se manda mensaje de error a cliente.*/
+	 strcpy(msgAux.evento,"Error: el tema no existe");
+	 if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	   continue;	
+	 }	
+       }
+       /*
+	 Si existe, se lee el host del cliente y buscamos el nodo subscriptor.
+       	 Si el nodo no existe se envia un mensaje de error al cliente.
+       */
+       hostBuffer = msgAux.host;
+       if((n=buscarSubscriptor(hostBuffer, currentT->first, currentS, anterior)) < 0){
+	 
+	 strcpy(msgAux.evento,"Error: no estas subscrito al tema indicado");
+	 strcpy(msgAux.evento,currentT->name);	 
+	 if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	   continue;	
+	 }	       
+	 close(newsockfd);
+	 continue;
+       }
+       /*
+	 Damos de baja al subscriptor eliminando el nodo correspondiente.
+	 Apuntamos el nodo anterior al siguiente al nodo a eliminar.
+       */
+       anterior->next = currentS->next;
+       /*Liberamos el espacio de memoria correspondiente al nodo*/
+       free(currentS);
+       currentS = NULL;
+       /*Mensaje de confirmación de baja y cierre de la conexión*/
+       strcpy(msgAux.evento,"Baja realizada");
+       if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	 continue;	
+       }
+       printf("Baja finalizada\n");
+       close(newsockfd);
+
+      
+    /*ENVÍO DE EVENTO DE UN EDITOR*/	
+    case EVENTO:
+
+      /*
+	Leemos el tema del evento y comprobamos que existe.
+        Si no existe, enviamos mensaje de error.
+      */
+      printf("solicitud de evento\n");	       
+      if((n=buscarTema(msgAux.tema, headTheme, currentT)) < 0){
+	
+	/*Si no exite, se manda mensaje de error al editor.*/
+	strcpy(msgAux.evento,"Error: el tema no existe");
+	if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	  continue;	
+	}
+	close(newsockfd);
+	continue;
+      }
+      
+      /*Leemos el evento y lo enviamos a todos los subscriptores*/
+      evento = msgAux.evento;
+      printf("Enviando evento..\n");
+      if((n = enviarEvento(evento, currentT->first)) < 0){
+	close(newsockfd);
+	continue;
+      }
+      /*Confirmación de envío de evento al cliente*/
+      strcpy(msgAux.evento,"Evento enviado");      
+      if((n = enviarMensaje(newsockfd, msgAux)) < 0){
+	close(newsockfd);
+	continue;	
+      }
+      printf("Evento enviado\n");
+      /*Cerramos socket*/
+      close(newsockfd);
+      
+    /*Ninguna de las anteriores*/
+    default:
+      continue;       
+    }
+  }
+  return 0; 
+}
+
+
+
+int buscarTema(char *tema, struct theme *primerTema, struct theme *currentT){
+
+  char *nombreActual = primerTema->name;
+  printf("Busco Tema\n");
+  
+  struct theme *nodePtr = primerTema;
+  
+  while(nodePtr != NULL){
+        if((strcmp(nombreActual,tema)) == 0 ){
+	  currentT = nodePtr; 
+	  return 0;
+	}
+	nodePtr = nodePtr->next;
+	nombreActual = nodePtr->name;
+  }
+  perror("El tema no existe\n");
+  return -1;
+} 
+
+int buscarSubscriptor(char *dirSub, struct subscriber *primerSub,
+		      struct subscriber *existe, struct subscriber *anterior){
+
+  char *dirActual = primerSub->host;
+  struct subscriber *nodePtr = primerSub;
+  
+  while(nodePtr != NULL){
+       if((strcmp(dirActual, dirSub)) == 0 ){
+	 existe = nodePtr; 
+	 return 0;
+       }
+       anterior = nodePtr;
+       nodePtr = nodePtr->next;
+       dirActual = nodePtr->host;
+  }
+  perror("El subscriptor no existe\n");
+  return -1;  
+}
+
+
+int enviarEvento(char *evento, struct subscriber *primerSub){
+
+  int sockfd, puerto, n;
+  struct hostent *server;
+  struct subscriber *nodePtr = primerSub;
+  struct sockaddr_in self_addr;
+  msg_t msg; 
+    
+  /*Bucle para enviar todos los mensajes a todos los subscriptores*/
+  while(nodePtr != NULL){
+    
+    /*Establecemos socket TCP para conectar con subscriptores*/    
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd < 0){
+      perror("fallo al montar socket");
+      return -1;
+    }
+    /*host del subscriptor actual*/
+    server = gethostbyname(nodePtr->host);
+    puerto = atoi(getenv("PUERTO"));
+  
+    bzero((char *) &self_addr, sizeof(self_addr));    
+    self_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr, 
+         (char *)&self_addr.sin_addr.s_addr,
+	  server->h_length);  
+    self_addr.sin_port = htons(puerto);
+    /*Connect*/
+    if (connect(sockfd, (struct sockaddr *)&self_addr, sizeof(self_addr)) < 0){
+        perror("Fallo al conectar");
+	close(sockfd);
+	return -1;
+    }
+    /*envío de evento*/
+    bzero((char *) &msg, sizeof(msg));  
+    strcpy(msg.evento, evento);
+    if((n = enviarMensaje(sockfd, msg)) < 0){
+      return -1;
+    }
+    /*Cerramos socket y avanzamos nodo*/
+    close(sockfd);
+    nodePtr = nodePtr->next;
+  }
+  return 0;
+}
+
+  
+
+
+
+void altaSubscriptor(struct theme *tema, char *clientDir){
+  /*Primer nodo de la lista y nuevo nodo a insertar*/
+  struct subscriber *nodePtr = tema->first;
+  struct subscriber *newNode = makeMem(sizeof(subscriptor));
+  /*añadimos la dirección del nuevo subscriptor al nodo y lo colocamos al comienzo*/
+  strcpy(newNode->host, clientDir);
+  newNode->next = nodePtr;
+  tema->first = newNode;    
+}
+
+
+void addTema (tema **first, char *name) {
+
+    tema *nuevo = makeMem (sizeof (*nuevo));
+    strcpy (nuevo->name, name);
+    nuevo->next = *first;
+    *first = nuevo;
+}
+
+void *makeMem(size_t size){
+  
+  void *memory;
+  
+  if((memory = malloc(size)) == NULL){
+        perror("memory failure");
+	exit(1);
+  }
+  return memory;
+}

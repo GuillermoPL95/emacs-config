@@ -1,0 +1,43 @@
+** Introducción
+Esta práctica consiste en un Twitter al que se pueden conectar varios usuarios para enviar tweets, seguir y ser seguidos por otros usuarios. También tiene implementado un servicio de mensajes directos entre usuarios.
+La práctica se ha desarrollado como una aplicación distribuida que se apoya en RMI para la comunicación entre entidades remotas.
+
+** Instalación y ejecución 
+Para ejecutar esta aplicación es necesario tener instalada tanto la última versión de java como Scala y SBT.
+El procedimiento es el siguiente:
+
+- Linux: instalar desde la línea de comandos
+#+BEGIN_SRC
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+sudo apt-get install scala sbt
+#+END_SRC
+- Windows: 
+- Mac: 
+
+Una vez instalada ejecutamos el siguiente comando desde el directorio donde se encuentre el repositorio([pathToRepository]/practica-twitter-quacker/quacker-client/)
+
+#+BEGIN_SRC
+sbt run
+#+END_SRC
+De las posibles opciones, seleccionamos client.ClientGUI.
+** Funcionalidades de la aplicación 
+*** Interfaz gráfica
+    La interfaz gráfica del programa se compone de una ventana inicial donde nos logearemos o registraremos, y una pantalla principal con múltiples opciones.
+    En dicha pantalla se nos permite en primera instancia enviar un tweet al tablón principal, donde se mostrarán todos los tweets que se hayan creado. También 
+    está la opción de búsqueda de usuarios y de enviar un mensaje directo al usuario que queramos. Por último, se nos permite cerrar nuestra sesión y filtrar 
+    el conjunto de tweets en base a nuestros parámetros.
+*** Prestaciones 
+    La principal prestación del twitter es el tablón principal donde se recogen todos los tweets que los usuarios a los que seguimos hayan escrito, además de los 
+    nuestros propios. También existe una implementación de envío de mensajes directos a usuarios. Si cerramos sesión y posteriormente volvemos a entrar, tanto los tweets como 
+    los mensajes directos que hayan sido escritos en nuestra ausencia se nos mostrarán en el tablón.
+*** VPS
+
+*** Base de datos
+    La base de datos utilizada para almacenar la información necesaria es Redis. Mediante listas, se guardan los nombres de todos los usuarios y sus correspondientes tweets y mensajes directos.
+    Este procedimiento consiste en crear una lista con 
+** Implementación
+*** Uso de la RMI
+*** 
+** Conclusiones 

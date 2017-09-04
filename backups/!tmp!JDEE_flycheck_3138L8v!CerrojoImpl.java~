@@ -1,0 +1,72 @@
+package dsm;
+import java.rmi.*;
+import java.rmi.server.*;
+import java.lang.Object;
+
+class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
+	
+	private int lectores;
+	private int escritores;
+	
+    CerrojoImpl() throws RemoteException {
+    	lectores = 0;
+    	escritores = 0;
+    }
+
+    public synchronized void adquirir (boolean exc) throws RemoteException{
+    	
+    	try{
+    		while(true){
+
+    			if(exc){
+
+    				if(lectores > 0 || escritores > 0){
+    					wait();    					
+    				}
+    				else{
+    					escritores++;
+    					break;
+    				}
+    			}
+    			else{
+    				if(escritores > 0){
+    					wait();
+    				}
+    				else{
+        				lectores++;
+        				break;
+    				}
+    			}
+    		}
+
+    	}
+
+    	catch (InterruptedException e){
+    		System.out.println("Error al adquirir el cerrojo");
+    	}
+    }
+    
+    public synchronized boolean liberar() throws RemoteException {
+    	
+    	
+    	if (lectores==0 && escritores==0){
+    		
+    		return false;
+    	}
+    	
+    	else if(lectores > 0){
+    		lectores --;
+    	
+    		if(lectores == 0){
+        		notifyAll();
+        		return true;
+    		}   		
+    	}
+    	else{
+    		escritores--;
+    		notifyAll();
+    		return true;
+    	}
+    	return true;
+    }
+}

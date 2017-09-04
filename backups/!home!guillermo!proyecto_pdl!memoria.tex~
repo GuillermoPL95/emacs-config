@@ -1,0 +1,921 @@
+% Created 2017-06-28 mié 05:12
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{GRUPO 5 \\
+}
+\date{\today}
+\title{MEMORIA PROYECTO PDL}
+\hypersetup{
+ pdfauthor={GRUPO 5 \\
+},
+ pdftitle={MEMORIA PROYECTO PDL},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\newline
+\begin{LATEX}
+\graphicspath\{\{./\}\}
+\hypersetup{hidelinks=true}
+\end{LATEX}
+\newpage
+
+\section{INTRODUCCIÓN}
+\label{sec:orgfb859a0}
+\subsection{Características}
+\label{sec:org30b3c16}
+Este es un compilador para un subconjunto del lenguaje JavaScript. 
+Se compone de cuatro ficheros, que contienen el analizador léxico, el enalizador semántico y 
+el sintáctico, la tabla de símbolos y el árbol sintáctico.
+
+Para la realización de la práctica decidimos utilizar una herramienta de Python llamada PLY que 
+es una implementación de Lex y Yacc para este lenguaje.
+
+Decidimos hacer una gramática ascendente LR, pues es la que utiliza PY y la describiremos a continuación.
+\subsection{Datos del entorno utilizado}
+\label{sec:org36b1bfd}
+Como se ha indicado previamente, la herramienta utilizada ha sido PLY; un analizador léxico y sintáctico muy potente que realiza la técnica de análisis
+ascendente. Para ejecutar el programa realizado tan solo hay que tener instalado python 3 y ejecutar mediante un terminar el fichero parser.py, con el fichero a leer
+como argumento de entrada.
+\section{DISEÑO ANALIZADOR LÉXICO}
+\label{sec:org93c1ec1}
+\subsection{Tokens}
+\label{sec:org35e5b28}
+Los tokens que hemos implmentado son:
+\begin{LATEX}
+\begin{verbatim}
+<ID, valor>
+<NUMERO, valor>
+<CADENA, valor>
+<SUMA, + >
+<EQUALS, == >
+<AND, && >
+<ASIG, = >
+<MULTASIG, *= >
+<LPAREN, ( >
+<RPAREN, ) >
+<LKEY, { >
+<RKEY, } >
+<COMA, , >
+<NEWLINE,  >
+\end{verbatim}
+\end{LATEX}
+
+Junto con una lista de palabras reservadas:
+
+\begin{LATEX}
+\begin{verbatim}
+'while': 'WHILE'
+'return': 'RETURN'
+'int': 'INT'
+'var': 'VAR'
+'bool': 'BOOL'
+'chars': 'CHARS'
+'function': 'FUNCTION'
+'if': 'IF'
+'write': 'WRITE'
+'prompt': 'PROMPT'
+\end{verbatim}
+\end{LATEX}
+
+\subsection{Gramática}
+\label{sec:org6c02905}
+A continuación describiremos la gramática del analizador léxico, en formato BNF. Sólo son recursivas por la derecha:
+\begin{LATEX}
+\begin{verbatim}
+letra -> a...z | A...Z | 0...9
+digito -> 0...9
+newline -> \d
+
+id -> letra auxI 
+auxI -> letra auxI | digito auxI | letra | digito
+
+numero -> digito auxN | digito dot | digito
+auxN -> digito auxN | digito
+dot -> .auxn
+
+cadena -> letra auxC | digito auxC 
+auxC -> letra auxC | digito auxC | letra | digito
+
+oper -> eq | and | asig | multiasig
+eq -> ==
+and -> &&
+asig -> =
+multiasig -> *=
+
+res -> while | return | int | var | bool | chars
+     | function | if | write | prompt
+
+punct -> lparen | rparen | lkey | rkey | coma
+lparen -> (
+rparen -> )
+lkey -> {
+rkey -> }
+coma -> ,
+\end{verbatim}
+\end{LATEX}
+
+\subsection{Autómata}
+\label{sec:org1d4b275}
+Este es el autómata que hemos realizado para nuestra práctica.
+\begin{LATEX}
+\begin{figure}[!h]
+\centering
+\includegraphics[scale=.3]{Diagram.png}
+\end{figure}
+\end{LATEX}
+\subsection{Errores}
+\label{sec:org6969e33}
+Los errores encontrados durante la obtención de los tokens se resaltarán en el fichero de error correspondiente al programa. En caso de encontrar dichos fallos
+la ejecución finaliza. No sucede sin embargo lo mismo con los errores semánticos que se encuentren.
+\section{DISEÑO ANALIZADOR SINTÁCTICO}
+\label{sec:org3272ef7}
+\subsection{Gramática}
+\label{sec:org7e091ce}
+Debido a que la herramienta que utilizamos exigía una gramática ascendente LR es la que hicimos:
+
+\begin{LATEX}
+\begin{verbatim}
+Ax -> S
+S -> init S
+S -> init
+init -> funcion
+init -> statement
+funcion -> func_pre LPAREN func_param RPAREN LKEY expression RKEY
+func_pre -> FUNCTION func_type ID
+func_param -> type ID func_params
+func_param -> empty
+func_params -> COMA type ID func_params
+func_params -> empty
+func_type -> type
+func_type -> empty
+type -> INT
+type -> CHARS
+type -> BOOL
+expression -> statement expression
+expression -> statement
+statement -> WHILE LPAREN op_log RPAREN LKEY expression RKEY
+statement -> IF LPAREN op_log RPAREN sentencias2
+statement -> VAR type ID
+statement -> sentencias2
+sentencias2 -> ID ASIG op_log
+sentencias2 -> ID LPAREN func_call RPAREN
+sentencias2 -> RETURN return_resultado
+sentencias2 -> WRITE LPAREN op_log RPAREN
+sentencias2 -> PROMPT LPAREN ID RPAREN
+op_log -> op_log AND op_rel
+op_log -> op_rel
+op_rel -> op_rel EQUALS op_asig
+op_rel -> op_asig
+op_asig -> op_asig ASIG op_multasig
+op_asig -> op_multasig
+op_multasig -> op_multasig MULTASIG op_arit
+op_multasig -> op_arit
+op_arit -> op_arit SUMA valor
+op_arit -> valor
+valor -> LPAREN op_log RPAREN
+valor -> ID LPAREN func_call RPAREN
+valor -> ID
+valor -> NUMERO
+valor -> CADENA
+func_call -> op_log func_call_two
+func_call -> empty
+func_call_two -> COMA op_log func_call_two
+func_call_two -> empty
+return_resultado -> op_log
+return_resultado -> empty
+empty -> 
+\end{verbatim}
+\end{LATEX}
+\subsection{Demostración}
+\label{sec:orga98f6ab}
+La herramienta utilizada para la realización de la práctica nos ha permitido elaborar una gramática correcta para el análisis sintáctico ascendente,
+ya que dicha herramienta es muy estricta con la elaboración de las reglas gramaticales. 
+\subsection{Procedimientos analizador}
+\label{sec:org379d4de}
+El analizador, antes de comenzar a ejecutar su función parse(), recibe la lista de tokens obtenida a partir del analizador léxico.
+Posteriormente, obtendrá las reglas gramaticales definidas y generará las tablas correspondientes para comenzar a parsear el código.
+\section{DISEÑO ANALIZADOR SEMÁNTICO}
+\label{sec:orgb5c4b07}
+\subsection{Traducción Dirigida por la Sintaxis}
+\label{sec:org2dfddd8}
+el analizador semántico realiza las siguienes acciones:
+\begin{LATEX}
+\begin{verbatim}
+S -> init S{init.tipo = S.tipo}
+S -> init{init.tipo = S.tipo}
+init -> funcion{init.tipo = funcion.tipo}
+init -> statement{init.tipo = statemente.tipo}
+funcion -> func_pre LPAREN func_param RPAREN LKEY expression RKEY{LiberarTS(funcionId); añadeLexema(TSG,funcion,funcType)}
+func_pre -> FUNCTION func_type ID{ID.type = func_type}
+func_param -> type ID func_params{func_param.type = id.type}
+func_param -> empty{func_param.type = tipo_vacio}
+func_params -> COMA type ID func_params{func_params.type = ID.type}
+func_params -> empty{func_params.type = tipo_vacio}
+func_type -> type{func_type.type = type.type}
+func_type -> empty{func_type.type = tipo_vacio}
+type -> INT{type.type = int}
+type -> CHARS{type.type = chars}
+type -> BOOL{type.type = bool}
+expression -> statement expression{expression.type = statement.type}
+expression -> statement{expression.type = statement.type}
+statement -> WHILE LPAREN op_log RPAREN LKEY expression RKEY{statement.type = type_ok}
+statement -> IF LPAREN op_log RPAREN sentencias2{statement.type = type_ok}
+statement -> VAR type ID{statement.type = type.type}
+statement -> sentencias2{statement.type = sentencias2.type}
+sentencias2 -> ID ASIG op_log{sentencias2.type = ID.type}
+sentencias2 -> ID LPAREN func_call RPAREN{sentencias2.type = type_ok}
+sentencias2 -> RETURN return_resultado{sentencias2.type = return_resultado.type}
+sentencias2 -> WRITE LPAREN op_log RPAREN{sentencias2.type = type_ok; if((op_log.type!= int) && (op_log.type!=chars){sentencias2.type = type_error}}
+sentencias2 -> PROMPT LPAREN ID RPAREN{sentencias2.type = type_ok;if((ID.type!= int) && (ID.type!=chars){sentencias2.type = type_error}}}
+op_log -> op_log AND op_rel{if(op_log.type!= op_rel.type){op_log.type = type_error}}
+op_log -> op_rel{op_log.type = op_rel.type}
+op_rel -> op_rel EQUALS op_asig{if(op_rel.type!=op_asig.type){op_rel.type = type_error}}
+op_rel -> op_asig{op_rel.type = op_asig.type}
+op_asig -> op_asig ASIG op_multasig{if(op_asig.type!=op_multasig.type){op_asig.type = type_error}}
+op_asig -> op_multasig{op_asig.type = op.multasig.type}
+op_multasig -> op_multasig MULTASIG op_arit{if(op_multasig.type!=op_arit.type){op_multasig.type = type_error}}
+op_multasig -> op_arit{op_multasig.type = op_arit.type}
+op_arit -> op_arit SUMA valor{if(op_arit.type!=valor.type){op_arit.type = type_error}}
+op_arit -> valor{op_arit.type = valor.type}
+valor -> LPAREN op_log RPAREN{valor.type = op_log.type}
+valor -> ID LPAREN func_call RPAREN{valor.type = type_ok}
+valor -> ID{valor.type = ID.type}
+valor -> NUMERO{valor.type = int}
+valor -> CADENA{valor.type = chars}
+func_call -> op_log func_call_two{func_call.type = op_log.type}
+func_call -> empty{func_call.type = tipo_vacio}
+func_call_two -> COMA op_log func_call_two{func_call_two.type = op_log.type}
+func_call_two -> empty{func_call_two.type = tipo_vacio}
+return_resultado -> op_log{return_resultado.type = op_log.type}
+return_resultado -> empty{return_resultado.type = tipo_vacio}
+empty -> {empty.type = tipo_vacio}
+\end{verbatim}
+\end{LATEX}
+\section{DISEÑO TABLA DE SÍMBOLOS}
+\label{sec:org562e4f1}
+\subsection{Descripción}
+\label{sec:orgb25d833}
+Las tablas de símbolos que se han realizado en el proyecto siguen una implementación
+basada en dos ficheros, SymTable.py y Table.py. El fichero SymTable contiene una clase
+definida SymTable de la que se crea una instancia al inicio del parser, y que servirá 
+para manejar y controlar el estado de todas las tablas de símbolos que se vayan creando
+durante la ejecución. Cada creación se realiza con la función newTable(). \newline
+
+Cada llamada a dicha función devuelve un identificador de la tabla de símbolos 
+pondiente, que utilizaremos para realizar diversas acciones como consultar la existencia
+de un determinado lexema en dicha tabla, obtener su tipo, u añadir nuevos lexemas.\newline
+
+Por último, mediante el método writeTable realizamos la escritura de todas las tablas 
+de símbolos que se hayan creado durante la secuencia de parse en el fichero especificado,
+con el formato especificado.
+\subsection{Estructura y organización}
+\label{sec:org9fd4f1a}
+Cada Tabla de símbolos guarda, mediante una estructura de datos, pares de valores que relacionan
+cada lexema con su tipo. A su vez, otra estructura de datos se encarga de controlar el desplazamiento
+que se produce en la tabla con nuevas entradas.\newline
+
+Los identificadores de las tablas creadas se guardan en una lista durante la ejecución,
+para posteriorme acceder a ellas mediante la instancia de SymTable cuando sea necesario.
+\section{CASOS DE PRUEBA}
+\label{sec:org8e41de1}
+\subsection{Correctos}
+\label{sec:org4df7e68}
+\subsubsection{Caso de prueba 1}
+\label{sec:org33e673c}
+\begin{verbatim}
+var chars s 
+var int i
+var bool pizza
+i = 8 + 6
+a = i + 1
+write(j)
+write("hola que tal")
+write(8 + 5 + 3)
+prompt(i)
+
+if (i == 14) a = 5
+
+while(i == 14)
+{
+write("hola que tal")
+s = "adios"
+}
+\end{verbatim}
+\subsubsection{Caso de prueba 2}
+\label{sec:orgfd9f49f}
+\begin{verbatim}
+var chars s 
+var int i
+
+function int funcion1(int n, int i, int j) 
+{
+	if(n == 0) return 1 
+	return i /*comentario*/
+}
+
+function int funcion2(int v)
+{
+i = 5
+return i + funcion2(i + 1) 
+}
+\end{verbatim}
+\subsubsection{Caso de prueba 3}
+\label{sec:orgdc31c33}
+\begin{verbatim}
+var chars s
+var int i
+
+function int funcion1(int n, int i, int j) 
+{
+	if(n == 0) return 1 
+	return i /*comentario*/
+}
+
+function chars cadena(bool j)
+{
+    while (i == 2)
+    {
+	i = i *= 1
+    }
+    return s
+}
+
+function fun3()
+{
+    var int j
+    j = 2
+    write(j)
+}
+fun3()
+\end{verbatim}
+\subsubsection{Caso de prueba 4}
+\label{sec:orge36f61d}
+\begin{verbatim}
+var chars s	/* variable global cadena */
+
+function int FactorialRecursivo (int n)	/* n: parámetro formal de la función entera */
+{
+	if (n == 0)	return 1
+	return n *= FactorialRecursivo (n + 1)	/* llamada recursiva */
+}
+
+function int FactorialWhile (int num)
+{
+    var int factorial 
+    factorial = 1 
+    while (i == num)	
+    {
+	factorial = i
+	i = i + 1
+    }
+    return factorial
+}
+
+function imprime (chars msg, int f)	/* función que recibe dos argumentos */
+{
+    write (s)
+    write (msg)
+    write (f)
+    write ("hola que tal")	/* imprime un salto de línea */	
+}
+\end{verbatim}
+\subsubsection{Caso de prueba 5}
+\label{sec:org8c8097f}
+\begin{verbatim}
+var bool variable1
+var bool variable2
+var chars s
+
+
+function int potencia(int i, int j)
+{
+    if (i == 5) j = 223
+    return i *= potencia(i + 1, 33 )
+}
+
+function demo ()
+{
+    var int i	
+    var int v0
+    var int v1
+    var int v2
+    var int v3
+    var chars s	/* Oculta a la global*/
+
+    write ("Escriba tres numeros")
+    prompt (v1)
+    prompt (v2)
+    prompt (v3)
+
+    if ((v1 == v2) && (v1 == v3))    write ("Escriba su nombre")
+
+
+    prompt (s)
+    v0 = v2 + v3
+    write (s)
+
+    while(v1 == 2)
+    {
+	i = i +2
+    }
+    s = "El primer valor era "
+    if (v1 == 0) 	write (s)
+
+    write (0)        
+    potencia (v0, 4)
+    potencia (zv, 5)
+}
+
+demo()
+\end{verbatim}
+\begin{enumerate}
+\item Listado de tokens
+\label{sec:org1f8e5a6}
+\begin{LATEX}
+\begin{verbatim}
+ <VAR,var>
+  <BOOL,bool>
+  <ID,variable1>
+  <VAR,var>
+  <BOOL,bool>
+  <ID,variable2>
+  <VAR,var>
+  <CHARS,chars>
+  <ID,s>
+  <FUNCTION,function>
+  <INT,int>
+  <ID,potencia>
+  <LPAREN,(>
+  <INT,int>
+  <ID,i>
+  <COMA,,>
+  <INT,int>
+  <ID,j>
+  <RPAREN,)>
+  <LKEY,{>
+  <IF,if>
+  <LPAREN,(>
+  <ID,i>
+  <EQUALS,==>
+  <NUMERO,5>
+  <RPAREN,)>
+  <ID,j>
+  <ASIG,=>
+  <NUMERO,223>
+  <RETURN,return>
+  <ID,i>
+  <MULTASIG,*=>
+  <ID,potencia>
+  <LPAREN,(>
+  <ID,i>
+  <SUMA,+>
+  <NUMERO,1>
+  <COMA,,>
+  <NUMERO,33>
+  <RPAREN,)>
+  <RKEY,}>
+  <FUNCTION,function>
+  <ID,demo>
+  <LPAREN,(>
+  <RPAREN,)>
+  <LKEY,{>
+  <VAR,var>
+  <INT,int>
+  <ID,i>
+  <VAR,var>
+  <INT,int>
+  <ID,v0>
+  <VAR,var>
+  <INT,int>
+  <ID,v1>
+  <VAR,var>
+  <INT,int>
+  <ID,v2>
+  <VAR,var>
+  <INT,int>
+  <ID,v3>
+  <VAR,var>
+  <CHARS,chars>
+  <ID,s>
+  <WRITE,write>
+  <LPAREN,(>
+  <CADENA,"Escriba tres numeros">
+  <RPAREN,)>
+  <PROMPT,prompt>
+  <LPAREN,(>
+  <ID,v1>
+  <RPAREN,)>
+  <PROMPT,prompt>
+  <LPAREN,(>
+  <ID,v2>
+  <RPAREN,)>
+  <PROMPT,prompt>
+  <LPAREN,(>
+  <ID,v3>
+  <RPAREN,)>
+  <IF,if>
+  <LPAREN,(>
+  <LPAREN,(>
+  <ID,v1>
+  <EQUALS,==>
+  <ID,v2>
+  <RPAREN,)>
+  <AND,&&>
+  <LPAREN,(>
+  <ID,v1>
+  <EQUALS,==>
+  <ID,v3>
+  <RPAREN,)>
+  <RPAREN,)>
+  <WRITE,write>
+  <LPAREN,(>
+  <CADENA,"Escriba su nombre">
+  <RPAREN,)>
+  <PROMPT,prompt>
+  <LPAREN,(>
+  <ID,s>
+  <RPAREN,)>
+  <ID,v0>
+  <ASIG,=>
+  <ID,v2>
+  <SUMA,+>
+  <ID,v3>
+  <WRITE,write>
+  <LPAREN,(>
+  <ID,s>
+  <RPAREN,)>
+  <WHILE,while>
+  <LPAREN,(>
+  <ID,v1>
+  <EQUALS,==>
+  <NUMERO,2>
+  <RPAREN,)>
+  <LKEY,{>
+  <ID,i>
+  <ASIG,=>
+  <ID,i>
+  <SUMA,+>
+  <NUMERO,2>
+  <RKEY,}>
+  <ID,s>
+  <ASIG,=>
+  <CADENA,"El primer valor era ">
+  <IF,if>
+  <LPAREN,(>
+  <ID,v1>
+  <EQUALS,==>
+  <NUMERO,0>
+  <RPAREN,)>
+  <WRITE,write>
+  <LPAREN,(>
+  <ID,s>
+  <RPAREN,)>
+  <WRITE,write>
+  <LPAREN,(>
+  <NUMERO,0>
+  <RPAREN,)>
+  <ID,potencia>
+  <LPAREN,(>
+  <ID,v0>
+  <COMA,,>
+  <NUMERO,4>
+  <RPAREN,)>
+  <ID,potencia>
+  <LPAREN,(>
+  <ID,zv>
+  <COMA,,>
+  <NUMERO,5>
+  <RPAREN,)>
+  <RKEY,}>
+  <ID,demo>
+  <LPAREN,(>
+  <RPAREN,)>
+ 
+\end{verbatim}
+\end{LATEX}
+
+\item Tabla de Símbolos
+\label{sec:org0fa3411}
+\begin{LATEX}
+CONTENIDO DE LA TABLA \# 0:\newline
+*LEXEMA: 'variable1'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : bool
+\item Desplazamiento : 4
+\end{itemize}
+*LEXEMA: 'variable2'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : bool
+\item Desplazamiento : 8
+\end{itemize}
+*LEXEMA: 's' \newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : chars
+\item Desplazamiento : 9
+\end{itemize}
+*LEXEMA: 'potencia'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : function
+\item Tipo : int
+\item Desplazamiento : --
+\end{itemize}
+*LEXEMA: 'demo' \newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : function
+\item Tipo : None
+\item Desplazamiento : --
+\end{itemize}
+*LEXEMA: 'zv'  \newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 11
+\end{itemize}
+
+\rule{\linewidth}{0.5pt}
+
+CONTENIDO DE LA TABLA \# 1: \newline
+*LEXEMA: 'i'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 2
+\end{itemize}
+*LEXEMA: 'j'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 4
+\end{itemize}
+
+\rule{\linewidth}{0.5pt}
+
+CONTENIDO DE LA TABLA \# 2:\newline
+*LEXEMA: 'i'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 2
+\end{itemize}
+*LEXEMA: 'v0'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 4
+\end{itemize}
+*LEXEMA: 'v1'\newline
+ TRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 6
+\end{itemize}
+*LEXEMA: 'v2'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 8
+\end{itemize}
+*LEXEMA: 'v3'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : int
+\item Desplazamiento : 10
+\end{itemize}
+*LEXEMA: 's'\newline
+ ATRIBUTOS: 
+\begin{itemize}
+\item Tipo : chars
+\item Desplazamiento : 11
+\end{itemize}
+
+\rule{\linewidth}{0.5pt}
+\end{LATEX}
+\end{enumerate}
+\subsection{Erróneos}
+\label{sec:orgc36a26f}
+\subsubsection{Caso De prueba1}
+\label{sec:orga55cd04}
+\begin{verbatim}
+var chars s 
+var int i
+var bool pizza
+i = 8 + s
+a = i + 1
+write(j)
+write("hola que tal")
+write(8 + pizza + 3)
+prompt(i)
+
+if (i == 14) a = 5
+
+funcion(i)
+while(i == 14)
+{
+write("hola que tal")
+s = "adios"
+}
+\end{verbatim}
+\begin{enumerate}
+\item traza de error
+\label{sec:org11a0135}
+\begin{verbatim}
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error semántico: parámetro de tipo incorrecto'
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error: la función no está declarada'
+\end{verbatim}
+\end{enumerate}
+\subsubsection{Caso de prueba 2}
+\label{sec:orgf1f3fab}
+\begin{verbatim}
+var chars s 
+var int i
+
+function int funcion1(int n, int i, int j) 
+{
+	if(n == 0) return 1 
+	return i /*comentario*/
+}
+
+function int funcion2(int v)
+{
+i = 5
+return i + funcion2(s) 
+}
+\end{verbatim}
+\begin{enumerate}
+\item traza de error
+\label{sec:org39ad5c1}
+\begin{verbatim}
+Error sintáctico: 'Error(llamada fun): parámetros de tipo incorrecto'
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error: tipo devuelto incorrecto'
+\end{verbatim}
+\end{enumerate}
+\subsubsection{Caso de prueba 3}
+\label{sec:org614b933}
+\begin{verbatim}
+var chars s
+var int i
+
+function int funcion1(int n, int i, int j) 
+{
+	if(n == 0) return 1 
+	return s /*comentario*/
+}
+s = 3
+function chars cadena(bool j)
+{
+    while (i == 2)
+    {
+	i = i *= 1
+    }
+    return s
+}
+
+function fun3()
+{
+    var int j
+    j = 2
+    write(j)
+}
+fun3(j)
+\end{verbatim}
+\begin{enumerate}
+\item traza de error
+\label{sec:org5e7354f}
+\begin{verbatim}
+Error sintáctico: 'Error: tipo devuelto incorrecto'
+Error sintáctico: 'Error semántico: parámetro de tipo incorrecto'
+\end{verbatim}
+\end{enumerate}
+\subsubsection{Caso de prueba 4}
+\label{sec:org54fd034}
+\begin{verbatim}
+var chars s	/* variable global cadena */
+
+function int FactorialRecursivo (int n)	/* n: parámetro formal de la función entera */
+{
+	if (n == s)	return 1
+	return n *= FactorialRecursivo (n + 1)	/* llamada recursiva */
+}
+
+function int FactorialWhile (int num)
+{
+    var int factorial 
+    factorial = 1 
+    while (i == num)	
+    {
+	factorial = i
+	i = i + s
+    }
+    return factorial
+}
+
+function imprime (chars msg, int f)	/* función que recibe dos argumentos */
+{
+    bool s
+    write (s)
+    write (msg)
+    write (f)
+    write ("hola que tal")	/* imprime un salto de línea */	
+}
+\end{verbatim}
+\begin{enumerate}
+\item traza de error
+\label{sec:org867a91b}
+\begin{verbatim}
+Error sintáctico: 'Error(Equals): operadores de tipo distinto a int'
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error semántico: parámetro de tipo incorrecto'
+Error sintáctico: 'LexToken(BOOL,'bool',52,468)'
+Error sintáctico: 'LexToken(RKEY,'}',57,579)'
+\end{verbatim}
+\end{enumerate}
+\subsubsection{Caso de prueba 5}
+\label{sec:org945e3c6}
+\begin{verbatim}
+var bool variable1
+var bool variable2
+var chars s
+
+
+function int potencia(int i, int j)
+{
+    if (i == 5) j = 223
+    return i *= potencia(i + 1, s )
+}
+
+function demo ()
+{
+    var int i	
+    var int v0
+    var int v1
+    var int v2
+    var int v3
+    var chars s	/* Oculta a la global*/
+
+    write ("Escriba tres numeros")
+    prompt (v1)
+    prompt (v2)
+    prompt (v3)
+
+    if ((v1 == s) && (v1 == v3))    write ("Escriba su nombre")
+
+
+    prompt (s)
+    v0 = v2 + s
+    write (s)
+
+    while(v1 == 2)
+    {
+       variable1 = i +2
+    }
+    s = "El primer valor era "
+    if (v1 == 0) 	write (s)
+
+    write (0)        
+    potencia (v0, 4)
+    potencia (zv, 5)
+}
+
+demo(i)
+\end{verbatim}
+\begin{enumerate}
+\item traza de errores
+\label{sec:org33adcdd}
+\begin{verbatim}
+Error sintáctico: 'Error(llamada fun): parámetros de tipo incorrecto'
+Error sintáctico: 'Error(multasig): tipos de variable diferentes'
+Error sintáctico: 'Error(Equals): operadores de tipo distinto a int'
+Error sintáctico: 'Error(Suma): tipos distintos de int'
+Error sintáctico: 'Error semántico: parámetro de tipo incorrecto'
+Error sintáctico: 'Error semántico: parámetro de tipo incorrecto'
+\end{verbatim}
+\end{enumerate}
+\end{document}

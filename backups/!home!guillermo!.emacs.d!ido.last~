@@ -1,0 +1,407 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/guillermo/IdeaProjects/" . "Middleware/")
+ ("/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/IS1/" . "entrega3/")
+ ("/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/" . "IS1/")
+ ("/home/guillermo/remote/DATSI/SD/DMUTEX.2016/" . "Proceso/")
+ ("/home/guillermo/remote/DATSI/SD/" . "DMUTEX.2016/")
+ ("/home/guillermo/remote/DATSI/" . "SD/")
+ ("/home/guillermo/remote/" . "DATSI/")
+ ("/home/guillermo/Descargas/" . "Telegram Desktop/")
+ ("/home/guillermo/SSDD/DMUTEX.2016/" . "Ejemplos/")
+ ("/home/guillermo/ruby/projects/Course/app/assets/" . "images/")
+ ("/home/guillermo/ruby/projects/Course/app/" . "controllers/")
+ ("/home/guillermo/ruby/projects/Course/vendor/assets/" . "javascripts/")
+ ("/home/guillermo/ruby/projects/Course/vendor/" . "assets/")
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/development/sprockets/" . "v3.0/")
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/development/" . "sprockets/")
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/" . "development/")
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/" . "assets/")
+ ("/home/guillermo/ruby/projects/Course/tmp/" . "pids/")
+ ("/home/guillermo/ruby/projects/Course/" . "app/")
+ ("/home/guillermo/ruby/projects/" . "Course/")
+ ("/home/guillermo/ruby/" . "projects/")
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/ARQUITECTURA/" . "proyecto/")
+ ("/home/guillermo/SSDD/EDSU.2016/" . "intermediario/")
+ ("/home/guillermo/UNIVERSIDAD/TERCER SEMESTRE/" . "PROGRAMACION PARA SISTEMAS/")
+ ("/home/guillermo/SSDD/" . "DMUTEX.2016/")
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/" . "servidor.2016a/")
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/" . "PrácticasDiseño/")
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/" . "ARQUITECTURA/")
+ ("/home/guillermo/UNIVERSIDAD/" . "CUARTO SEMESTRE/")
+ ("/home/guillermo/SSDD/PracticaEdSub/" . "intermediario/")
+ ("/home/guillermo/proyectoArquitectura/" . "AC_proyecto.2015b/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/test/" . "scala/")
+ ("/home/guillermo/GIT/WORK/aeonflux/docs/madrid/" . "pollution/")
+ ("/home/guillermo/GIT/WORK/aeonflux/docs/" . "madrid/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/com/deveryware/" . "streams/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/com/" . "deveryware/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/" . "com/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/" . "java/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/" . "main/")
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/" . "src/")
+ ("/home/guillermo/GIT/WORK/aeonflux/" . "aeonflux/")
+ ("/home/guillermo/GIT/WORK/" . "aeonflux/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/scala/" . "client/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/" . "scala/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/" . "main/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/" . "src/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/" . "server/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/" . "scala/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/" . "main/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/" . "src/")
+ ("/home/guillermo/GIT/practica-twitter-quacker/" . "quacker-client/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/src/main/scala/jmschat/felstar/" . "jmsScala/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/src/main/scala/jmschat/" . "message/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/src/main/scala/" . "jmschat/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/mini-chat/src/main/scala/com/" . "example/")
+ ("/home/guillermo/practica1-JMS/mini-chat/src/main/scala/" . "com/")
+ ("/home/guillermo/practica1-JMS/mini-chat/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/mini-chat/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/mini-chat/" . "src/")
+ ("/home/guillermo/practica1-JMS/swing-examples/src/main/scala/swing/" . "UI/")
+ ("/home/guillermo/practica1-JMS/swing-examples/src/main/scala/" . "swing/")
+ ("/home/guillermo/practica1-JMS/swing-examples/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/swing-examples/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/swing-examples/" . "src/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/project/" . "target/")
+ ("/home/guillermo/practica1-JMS/chat-1.0/" . "src/")
+ ("/home/guillermo/practica1-JMS/redis-database/src/main/scala/" . "redis-handler/")
+ ("/home/guillermo/practica1-JMS/redis-database/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/redis-database/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/redis-database/" . "src/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/QUINTO SEMESTRE/Seguridad/" . "PracAvalancha/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/QUINTO SEMESTRE/" . "Seguridad/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/TERCER SEMESTRE/PROGRAMACION PARA SISTEMAS/" . "practicas/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/TERCER SEMESTRE/" . "PROGRAMACION PARA SISTEMAS/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/QUINTO SEMESTRE/Seguridad/PracAvalancha/" . "python-whirlpool/")
+ ("/home/guillermo/GIT/scala-redis/src/main/scala/com/" . "redis/")
+ ("/home/guillermo/GIT/scala-redis/src/main/scala/" . "com/")
+ ("/home/guillermo/GIT/scala-redis/src/main/" . "scala/")
+ ("/home/guillermo/GIT/scala-redis/src/" . "main/")
+ ("/home/guillermo/GIT/scala-redis/" . "src/")
+ ("/home/guillermo/GIT/" . "flycheck-pyflakes/")
+ ("/home/guillermo/practica1-JMS/scala-examples/nbody/src/main/scala/nbody/" . "nbody/")
+ ("/home/guillermo/practica1-JMS/scala-examples/nbody/src/main/scala/" . "nbody/")
+ ("/home/guillermo/practica1-JMS/scala-examples/nbody/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/scala-examples/nbody/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/scala-examples/nbody/" . "src/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/target/resolution-cache/" . "org.scala-sbt.temp/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/target/scala-2.10/classes/com/" . "example/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/target/scala-2.10/classes/" . "com/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/target/scala-2.10/" . "classes/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/target/" . "resolution-cache/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/com/" . "example/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/example/" . "target/")
+ ("/home/guillermo/practica1-JMS/scala-examples/matrix-mul/src/main/scala/" . "matrix/")
+ ("/home/guillermo/practica1-JMS/scala-examples/matrix-mul/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/scala-examples/matrix-mul/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/scala-examples/matrix-mul/" . "src/")
+ ("/home/guillermo/proyecto_pdl/ply-3.9/example/" . "BASIC/")
+ ("/home/guillermo/proyecto_pdl/ply-3.9/" . "example/")
+ ("/home/guillermo/proyecto_pdl/" . "salida/")
+ ("/home/guillermo/Escritorio/ply-3.9/example/" . "ansic/")
+ ("/home/guillermo/Escritorio/ply-3.9/" . "example/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/com/" . "example/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/scala/" . "com/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/scala-examples/jms-hello-world-async/" . "src/")
+ ("/" . "home/")
+ ("/home/guillermo/practica1-JMS/scala-examples/hello-world/src/main/scala/com/" . "example/")
+ ("/home/guillermo/practica1-JMS/scala-examples/hello-world/src/main/scala/" . "com/")
+ ("/home/guillermo/practica1-JMS/scala-examples/hello-world/src/main/" . "scala/")
+ ("/home/guillermo/practica1-JMS/scala-examples/hello-world/src/" . "main/")
+ ("/home/guillermo/practica1-JMS/scala-examples/hello-world/" . "src/")
+ ("/home/guillermo/practica1-JMS/scala-examples/" . "jms-hello-world-async/")
+ ("/home/guillermo/practica1-JMS/" . "chat-1.0/")
+ ("/home/guillermo/MierdasScala/" . "Mi primera vez/")
+ ("/home/guillermo/.emacs.d/" . "plugins/")
+ ("/home/" . "guillermo/")
+ ("/home/guillermo/home/guillermo/" . "Proyecto_coche/")
+ ("/home/guillermo/home/" . "guillermo/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/" . "filtrar.2016a/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/" . "PrácticasDiseño/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/CUARTO SEMESTRE/" . "SISTEMAS OPERATIVOS/")
+ ("/home/guillermo/Escritorio/UNIVERSIDAD/" . "TERCER SEMESTRE/")
+ ("/home/guillermo/Escritorio/" . "pyTable/")
+ ("/home/guillermo/" . "IdeaProjects/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/guillermo/Escritorio/"
+ "/home/guillermo/proyecto_pdl/ejemplos/"
+ "/home/guillermo/proyecto_pdl/"
+ "/home/guillermo/proyecto_pdl/salida/"
+ "/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/ARQUITECTURA/proyecto/"
+ "/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/IS1/entrega3/"
+ "/home/guillermo/proyecto_pdl/pyTable/"
+ "/home/guillermo/"
+ "/home/guillermo/Escritorio/pyTable/"
+ "/home/guillermo/proyecto_pdl/ply-3.9/example/"
+ "/home/guillermo/proyecto_pdl/ply-3.9/example/ansic/"
+ "/home/guillermo/proyecto_pdl/ply-3.9/"
+ "/home/guillermo/.emacs.d/"
+ "/home/guillermo/GIT/flycheck-pyflakes/"
+ "/home/guillermo/SSDD/DMUTEX.2016/Ejemplos/"
+ "/home/guillermo/remote/DATSI/SD/DMUTEX.2016/Proceso/"
+ "/home/guillermo/SSDD/DMUTEX.2016/Controlador/"
+ "/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/servidor.2016a/"
+ "/home/guillermo/SOS/sosws/resources/"
+ "/home/guillermo/Descargas/Telegram Desktop/"
+ "/home/guillermo/SSDD/DMUTEX.2016/Proceso/"
+ "/home/guillermo/ruby/projects/Course/app/controllers/"
+ "/home/guillermo/ruby/projects/Course/"
+ "/home/guillermo/ruby/projects/Course/vendor/assets/stylesheets/"
+ "/home/guillermo/SSDD/EDSU.2016/intermediario/"
+ "/home/guillermo/SSDD/EDSU.2016/editor/"
+ "/home/guillermo/SSDD/javadsm.2016/dsm/"
+ "/home/guillermo/SSDD/JavaDSM.2016/cliente/"
+ "/home/guillermo/SSDD/EDSU.2016/subscriptor/"
+ "/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/filtrar.2016a/"
+ "/home/guillermo/SSDD/PracticaEdSub/intermediario/"
+ "/home/guillermo/SSDD/PracticaEdSub/subscriptor/"
+ "/home/guillermo/SSDD/PracticaEdSub/editor/"
+ "/home/guillermo/UNIVERSIDAD/TERCER SEMESTRE/PROGRAMACION PARA SISTEMAS/"
+ "/home/guillermo/proyectoArquitectura/"
+ "/home/guillermo/ElectroVasco/"
+ "/home/guillermo/proyectoArquitectura/AC_proyecto.2015b/"
+ "/home/guillermo/hashCode/evilcorp-hashcode-2017/"
+ "/home/guillermo/Escritorio/fo-schemas/"
+ "/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/scala/client/"
+ "/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/server/"
+ "/home/guillermo/GIT/practica-twitter-quacker/"
+ "/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/client/"
+ "/home/guillermo/practica1-JMS/"
+ "/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/scala/server/"
+ "/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/test/scala/"
+ "/home/guillermo/GIT/WORK/aeonflux/aeonflux/"
+ "/home/guillermo/GIT/WORK/aeonflux/docs/"
+ "/home/guillermo/GIT/WORK/aeonflux/docs/madrid/pollution/"
+ "/home/guillermo/GIT/WORK/aeonflux/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "pyjs.py"
+ "ejemplo4.js"
+ "ejemplo10.js"
+ "ejemplo9.js"
+ "ejemplo8.js"
+ "ejemplo7.js"
+ "gram.txt"
+ "parser.out"
+ "Table.py"
+ "ejemplo6.js"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/guillermo/IdeaProjects/Middleware/" (22516 51888 44784 483000) "../" "src/" ".idea/" "Middleware.iml" "./")
+
+ ("/home/guillermo/IdeaProjects/" (22516 51629 60781 122000) "../" "Middleware/" "./")
+
+ ("/home/guillermo/" (22956 25166 610238 511000) "Imágenes/" ".activator/" "ElectroVasco.tar.gz" "Descargas/" ".gnome2_private/" "PacketTracer62Student/" ".wine-pipelight/" ".zsh-update" "org-reveal/" ".dropbox/" "acm.css" "FTL/" ".zcompdump-guillermo-HP-255-G3-Notebook-PC-5.1.1" "pt/" "examples.desktop" ".ICEauthority" "Vídeos/" ".avidemux/" ".bash_logout" ".local/" "../" "acm.js~" "anaconda3/" ".bash_history" "acm.js" "hashCode/" ".sbt/" ".gvfs/" ".android/" "UNIVERSIDAD/" ".dmrc" ".ipython/" ".mozilla/" ".jalopy.15/" "reveal.js/" "remote/" ".TelegramDesktop/" ".pylint.d/" ".texmf-var/" "SOS/" ".chromium-bsu" ".dia/" "MATLAB/" ".lis" ".dropbox-dist/" ".bashrc~" ".xsession-errors.old" ".java/" ".thumbnails/" ".oracle_jre_usage/" "#.emacs#" ".emacs.d/" ".ssh/" "Updater" ".darwinia/" "eclipse-inst-linux64.tar.gz" ".zsnes/" "eclipse-installer/" ".gitconfig" ".Skype/" ".p2/" ".store/" "workspaceEE/" ".sudo_as_admin_successful" "Escritorio/" ".xinputrc" "IdeaProjects/" "axis2/" "apache-tomcat/" ".scala_history" "snap/" "home/" ".gaijin_games/" "acm.css~" ".pki/" ".zshrc~" ".gnupg/" "eclipse/" ".mysql/" ".h68" "ruby/" "oh-my-zsh/" "Volgarr/" ".atom/" ".lesshst" "target/" "apache-ant/" ".compiz/" ".zcompdump" ".cache/" "Downloads/" "VolgarrTheViking_v1.36c_Linux32.tar.gz" "payara41/" ".profile" "sketchbook/" ".config/" ".eclipse/" "redis-3.2.5/" ".macromedia/" "GuiónCharla.org~" ".ivy2/" ".xsession-errors" "ElectroVasco/" ".dbus/" ".modelsim.bak" "jruby-1.7.27/" ".zshrc" ".altera.quartus/" ".Xauthority" "Practicas" ".gem/" "astah_professional/" ".continuum/" "yasnippet/" "workspace/" "Música/" "Documentos/" ".gconf/" ".xscreensaver" ".bashrc" ".modelsim" "glassfish4/" "Público/" ".zshrc.pre-oh-my-zsh" ".IdeaIC2016.2/" ".thunderbird/" ".packettracer" "./" ".gnome2/" ".oh-my-zsh/" ".rediscli_history" ".adobe/" "CaveStoryPlus/" ".zsh_history" "Dropbox/" "salvaguarda" ".gnome/" "activator/" ".nano/" ".platformio/" ".arduino/" "Telegram/" ".git/" "GIT/" ".tooling/" ".swt/" ".coursier/")
+
+ ("/home/guillermo/.emacs.d/" (22956 25188 981584 296000) "session.2d3109e3a-bb75-4cb8-9292-aaa8dd2cc8de" "session.1039c46d23e45ea0a0146247223589409300000018480053" "session.2291b802d-a1e7-4295-897a-68a3d1873b89" "../" "plugins/" "init.el" "session.10ffe55274cab27785144741446437397800000016290050" "backups/" "session.10c45fa28a4cb6db5d144767519347760800000015360050" "init.el~" "ido.last~" "ensime/" "auto-save-list/" "ido.last" "#ido.last#" "abbrev_defs" "snippets/" "session.108b30619d86d6f9c2147335028439451900000034950057" "elpa/" "session.10432cd6c1d92dbf3145812027085011100000012210049" "semanticdb/" "recentf" "session.1057d2dfd98aa51ad146045476512826900000018140050" "session.2bca4fe97-5832-4faa-b839-3ebdce0599e2" "games/" "./")
+
+ ("/home/guillermo/proyecto_pdl/" (22867 8955 996295 202000) "parser.py" "memoria.org" "parsetab.py" "__pycache__/" "Ast.py" "ply-3.9/" "../" "SymTable.py" "memoria.pdf" "Table.py" ".gitignore" "pyTable/" "salida/" "entregaPDL.zip" "tokens.txt" "Diagram.png" "Alex.py" "parser.out" "ejemplos/" "./" ".git/" "memoria.tex" "gram.txt" "README.md")
+
+ ("/home/guillermo/proyecto_pdl/ejemplos/" (22867 30983 853790 527000) "ejemplo6.js" "ejemplo4.js" "../" "ejemplo3.js" "ejemplo8.js" "ejemplo5.js" "ejemplo7.js" "ejemplo10.js" "ejemplo1.js" "ejemplo9.js" "ejemplo2.js" "./")
+
+ ("/home/guillermo/Escritorio/" (22866 46659 855065 550000) "CorreoTioDeTuenti" "Libros varios/" "VisorArbStLinux.tar" "parser.py" "Super Mario World (Europe).sfc" "../" "apache-maven-3.3.9-bin.tar.gz" "photo_2017-01-05_16-44-31.jpg" "Practica RESTful 2017.pdf" "Computer_Architecture,_Fifth_Edition.pdf" "VisorArbStLinux/" "Comentarios proyecto arquitectura~" "Apuntes_de_Procesadores_del_lenguaje6.pdf" "pyparse.py" "System.jpg" "pyjs.py" "./" "Super Metroid (Europe) (En,Fr,De).sfc" "Documento sin título~" "tickets_00133919.pdf")
+
+ ("/home/guillermo/proyecto_pdl/salida/" (22867 984 127863 625000) "../" "error.txt" "Tablas.out" "tokens.txt" "./" "parse.txt")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/ARQUITECTURA/" (22849 4667 522883 471000) "ac_parc3_jun15-sol(2).pdf" "Tema 1/" "../" "AC_proyecto.2015b/" "puertob" "Comentarios proyecto arquitectura" "Tema 3/" "ac_parc3_enero_2015-sol(1).pdf" "ac_parc1_marzo_2015-sol.pdf" "ac_parc3_enero_2015-sol.pdf" "AC09colpreguntasexaES-feb2015.pdf" "consultas.bin" "ac_final_jul15-sol.pdf" "puertoa" "fotos/" "manual.pdf" "Tema 2/" "tabla.pdf" "dudas" "ilp_7etapas_pred_est.pdf" "Tema 4/" "AC_tema_MP_16-17.pdf" "ILPS-Abr-15.pdf" "proyecto/" "ac_Parc3_jun16_SOL.pdf" "./" "missfont.log" "Practica memoria 1/" "ac_p3_jul16_SOL.pdf" "ac_parc3_jun15-sol.pdf" "multithreading.pdf" "ac_Rec_parc1_enero_2015-sol.pdf")
+
+ ("/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/IS1/" (22827 64645 37525 10000) "Ejemplo Diseño Arquitectura.pdf" "../" "2017_Ejercicio de Arquitectura v1.0.pdf" "entrega3/" "entrega1/" "2017_Instrucciones implantacion v1.2.pdf" "2017_Estilos y patrones.pdf" "2017_Conceptos (1).pdf" "./" "2017Ejemplo Diseño Arquitectura_dia2a1.pdf")
+
+ ("/home/guillermo/proyecto_pdl/pyTable/" (22860 53733 310396 899000) "__pycache__/" "../" "SymTable.py" "Table.py" "SymTable.pyc" "Table.pyc" "__init__.py" "./" "__init__.pyc" "README.md")
+
+ ("/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/IS1/entrega3/" (22827 64670 767988 940000) "implantacion.pdf" "implantacion.org" "DiagramaSecuenciaPC.jpg.bak" "../" "implantacion.tex" "DiagramaLogico.jpg" "modeloConceptual.pdf" "modeloConceptual.org" "Presentación implantación.ppt" "DiagramaFisico.jpg" "DiagramaFisicoImplantacion.jpg" "modeloConceptual.tex" "DiagramaSecuenciaMovil.jpg.bak" "Diagrama físico.jpg.bak" "DiagramaLogicoImplantacion.jpg" "./" "DiagramaSecuenciaMovil.jpg" "DiagramaSecuenciaPC.jpg")
+
+ ("/home/guillermo/Descargas/Telegram Desktop/" (22857 40771 193968 995000) "PerspectivaLogicaImpl.jpg" "prac.py" "Proyecto Ruby on Rails.zip" "../" "video_2017-04-28_01-30-27.mov" "traza.bin" "implantacion.tex" "image_2017-06-19_11-47-17.png" "PerspectivaFisicaImpl.asta" "PerspectivaFisicaImpl.jpg" "SistemaDeMemoria.pdf" "Implantación.docx" "Ingeniería de Requisitos.pdf" "FabricaCerrojosImpl.java" "pyTable.zip" "video_2017-05-02_23-24-11.mov" "cliente.zip" "dsm.zip" "image_2017-05-21_12-36-32.png" "Implantación.pdf" "./" "JavaDSM.2016.zip" "documentacion.txt" "PerspectivaLogicaImpl.asta" "DATSI.zip" "PDL.zip")
+
+ ("/home/guillermo/Escritorio/pyTable/" (22856 16615 671414 548000) "__pycache__/" "../" "SymTable.py" "Table.py" "SymTable.pyc" "Table.pyc" "__init__.py" "./" "__init__.pyc" "README.md")
+
+ ("/home/guillermo/proyecto_pdl/ply-3.9/example/BASIC/" (22470 58874 0 0) "basic.py" "sqrt2.bas" "func.bas" "gosub.bas" "../" "README" "gcd.bas" "sqrt1.bas" "sales.bas" "basiclex.py" "basinterp.py" "basparse.py" "maxsin.bas" "linear.bas" "sears.bas" "hello.bas" "powers.bas" "rand.bas" "./" "dim.bas" "basiclog.py")
+
+ ("/home/guillermo/proyecto_pdl/ply-3.9/example/ansic/" (22856 16093 431830 733000) "../" "README" "clex.py" "cparse.py" "./")
+
+ ("/home/guillermo/proyecto_pdl/ply-3.9/example/" (22470 58874 0 0) "ansic/" "unicalc/" "calcdebug/" "closurecalc/" "optcalc/" "../" "README" "cleanup.sh" "calc/" "newclasscalc/" "yply/" "GardenSnake/" "hedit/" "calceof/" "classcalc/" "BASIC/" "./")
+
+ ("/home/guillermo/proyecto_pdl/ply-3.9/" (22624 5748 864774 97000) "setup.cfg" "../" "test/" "ply.egg-info/" "MANIFEST.in" "doc/" "ANNOUNCE" "CHANGES" "example/" "TODO" "PKG-INFO" "build/" "./" "ply/" "setup.py" "README.md")
+
+ ("/home/guillermo/GIT/flycheck-pyflakes/" (22854 44320 43732 771000) "../" "Cask" ".gitignore" "flycheck-pyflakes.el" "./" ".git/" "README.md")
+
+ ("/home/guillermo/GIT/" (22854 44227 253907 548000) "../" "flycheck-pyflakes/" "helm/" "practica-twitter-quacker/" "InteligenciaArtificial/" "./" "WORK/" "scala-redis/")
+
+ ("/home/guillermo/SSDD/DMUTEX.2016/Proceso/" (22832 38160 766265 705000) "../" "main.c" ".#main.c" "main.o" ".INDEX" "#main.c#" "./" "Makefile")
+
+ ("/home/guillermo/SSDD/DMUTEX.2016/Ejemplos/" (22830 58597 12493 807000) "../" "01.ord" "03.ord.result" "04.ord" "05.ord" "02.ord.result" "03.ord" "04.ord.result" "02.ord" "./" "01.ord.result" "05.ord.result")
+
+ ("/home/guillermo/SSDD/DMUTEX.2016/" (22831 63409 363756 149000) "../" "Ejemplos/" "Changelog.md" "MakeVars" "Controlador/" "proceso" "dmutex.2016.entrega.tar.gz" "Proceso/" "controlador" "./" "Makefile" "Makefile.common")
+
+ ("/home/guillermo/remote/DATSI/SD/DMUTEX.2016/Proceso/" (22830 62070 0 0) "Makefile" "main.c" "../" "./")
+
+ ("/home/guillermo/remote/DATSI/SD/DMUTEX.2016/" (22830 46213 0 0) "memoria.txt" "autores" "Makefile.common" "Ejemplos/" "Controlador/" "MakeVars" "Proceso/" "Changelog.md" "Makefile" "dmutex.2016.entrega.tar.gz" "../" "./")
+
+ ("/home/guillermo/remote/DATSI/SD/" (22830 46213 0 0) "JavaDSM.2016/" "DMUTEX.2016/" "EDSU.2016/" "../" "./")
+
+ ("/home/guillermo/remote/DATSI/" (22784 48733 0 0) "SD/" "so/" "so4/" "../" "./")
+
+ ("/home/guillermo/remote/" (22514 2432 0 0) "DATSI/" ".prueba_vi.txt.swp" ".config/" ".cache/" ".lesshst" ".viminfo" ".vim/" ".forward" "Maildir/" ".ssh/" "autores.txt" "pps/" ".bash_history" ".mozilla/" ".gnome2/" ".emacs" ".bashrc" ".bash_profile" ".bash_logout" ".emacs.d/" ".oracle_jre_usage/" "Tutorial_QII_Sintesis/" ".metadata/" "../" "./")
+
+ ("/home/guillermo/SSDD/DMUTEX.2016/Controlador/" (22830 58641 38433 125000) "../" "logger.h" "fichero.c" "main.c" "logger.o" "procesos.c" "main.o" ".INDEX" "fichero.o" "fichero.h" "logger.c" "./" "procesos.o" "procesos.h" "Makefile")
+
+ ("/home/guillermo/SSDD/" (22819 3099 33590 511000) "EDSU.2016/" "../" "javadsm.2016/" "./" "DMUTEX.2016/")
+
+ ("/home/guillermo/SOS/sosws/resources/" (22823 24330 167119 482000) "../" "services.xml" "UserManagementWS.wsdl" "./")
+
+ ("/home/guillermo/Descargas/" (22820 1027 323028 108000) "tsetup.1.1.2.tar.xz" ".~lock.05CursoOO_Patrones.doc#" ".~lock.06CursoOO_DisenoEvolutivo.doc#" "../" "jruby-bin-1.7.27.tar.gz" "Ejemplo Diseño Arquitectura_dia2b.pdf" "axis2-1.7.5-bin.zip" ".~lock.01Curso_OO_Objetos_ObjetosYEstructurado.doc#" ".~lock.05CursoOO_Patrones (1).doc#" "2017Ejemplo Diseño Arquitectura.pdf" ".~lock.02Curso_OO_Objetos_ObjetosYmensajes.doc#" "jruby-1.7.27/" "./" "Telegram Desktop/")
+
+ ("/home/guillermo/ruby/projects/Course/app/controllers/" (22813 43989 628294 8000) "../" "study_programs_controller.rb" "students_controller.rb" "concerns/" "application_controller.rb" "./")
+
+ ("/home/guillermo/ruby/projects/Course/app/assets/images/" (22813 43015 391952 636000) "../" ".keep" "./")
+
+ ("/home/guillermo/ruby/projects/Course/app/assets/" (22813 43015 391952 636000) "../" "javascripts/" "images/" "./" "stylesheets/")
+
+ ("/home/guillermo/ruby/projects/Course/vendor/assets/stylesheets/" (22813 43015 459948 368000) "../" ".keep" "./")
+
+ ("/home/guillermo/ruby/projects/Course/vendor/assets/javascripts/" (22813 43015 459948 368000) "../" ".keep" "./")
+
+ ("/home/guillermo/ruby/projects/Course/vendor/assets/" (22813 43015 459948 368000) "../" "javascripts/" "./" "stylesheets/")
+
+ ("/home/guillermo/ruby/projects/Course/vendor/" (22813 43015 459948 368000) "../" "assets/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/pids/" (22813 44104 5389 120000) "../" "server.pid" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/development/sprockets/v3.0/" (22813 44197 178396 775000) "ZG4r0cjvf-rbev88TVGCvVon0WG_E2GnWQWZwqhEWcU.cache" "9CMvNathUOjiJCTaLlSpas9velmhfrCbKK1IMw7VTpE.cache" "TmsA1U7alwd7MLmvlIy4a2SeV5a3076WHw4J1RrbU04.cache" "ariwANaJPGKwJzWWTkUrTlKe2RV0x4f8nQYrcH2zX7A.cache" "K4empt9vSavxdeKO7gGOmQ_3qKFbBui-7gIzjClOejU.cache" "hk8sNJPmW5bVRPMPTpRI1W2bAck4OseDbHBBLx5Bt4E.cache" "OI6uxGcnsKavdWTtwDAasU3wPx8QXhzBgV0X2n1KjMQ.cache" "Vicz-3h7Y-77HnJk8cKoVFMdz8kTkJuG-2SxFuG_jO0.cache" "FDy30T7n-o19VKVHoT9csBL82w-KPsOaLEYYa_bKH1Q.cache" "yXr7rTeNyZdneImU3F4q4AQMeQG1EvsD8FwU_Xeg-l8.cache" "YPi0qIFJAhDVsQuHAbLEQHQj_lpQjsL0bVXXvQMIHDw.cache" "4jTgeyfImuOicGfF5445JJQK6RkPqMdLGwDt9Fg3wWI.cache" "LKynpTswDLeVYXwxnB2Y5cb9Ls2t-hJ_A_XLec9ow4g.cache" "T2b8yq5--QJIN-NugdZtCAceUNMCZauW0cJE1QVjALs.cache" "gGiHEImyLz4k1klm2Znu7X1NkWEGQkGw1UlnJ20a7o0.cache" "Pm3ENYpCrQMOJGd-d8lACN_nbGZWiivq_KyPLJoD9Xk.cache" "wgYyD_XUTZQwi0NKRLxZkUqfV2ZpUUr3lru4tmpSDr8.cache" "HpNZ9GEyofRJ0LcILGL_3hCgiVDwXCgk9-ECyMInWTI.cache" "OjjQkkmpejxghyYrzZ60Rk4NcmgMu8V3-2JFM_j9dbc.cache" "O2z8fHoKgj-tb6AoukO15rZwUfZDBJSDL5bhMX_8qOM.cache" "8rTGvlimy0ltEDS1RGvu4HiQRYr1QdIS4llrlqbuAcc.cache" "kSkCWaAJCcTgZ_AhrRCjZhNtkE12cubiq70uNtditqk.cache" "fgpzdKC1PD4JMzc1tsgh738uwCD1NsEYBke1yft8a78.cache" "yohAK9yKCb6Wujuu8VwddVJ20aTcuhX4uVgldQM16ik.cache" "9jiQtyULClcyPKqvyObE1j4m94NaZzVEEnqEO3cJsyI.cache" "hQBlBDm0pgB3DSltqQ-Bi7ifC1Lr5lWZD7p84vbevzg.cache" "4oxrIPn8klN6WDbP-LzcERSApX4h7BexUkeeyXnAJ7A.cache" "GjeRcfFXBBb_JP__qJTY8UmH69bUbygWxWkFO8c-o3c.cache" "WkbS6mRqZ-GtjHYRuRv9K9hNmS_FsPSTB7dFci7oqFc.cache" "uiO8iXK5W4NECcG_aCJyGkuWsHvZZWAaH46S4qrXBu4.cache" "r9raI8EsCA8LCKlH6HDDVtvVFoHDit-0PmjekzvuJ2o.cache" "HOWk-tX1ZMWd7cBhA5MAZLkADJMfMqpb9EQ1PV82omY.cache" "t-UlEgshTHAgfB4r8DEvq_bsmxSFzb2YdBiESwWydk8.cache" "915SfjJwy0oWe_2Ej0ni1tOKSE2fJGXCFMMT0dTarEA.cache" "rhBtOWA8LeG8kOoF1wb2vGCsqHdcfgXBfg8Sfd-_YJs.cache" "6dQMbbnW0xgRxBp0lAefMOUwmH1ZOLVR0t1J9syyOdg.cache" "2iYYYoVlnr66yswpXC2L2P_15vY1tak_THPo2373TT0.cache" "5Lly_CA8DZvPhQV2jDQx-Y6P_y3Ygra9t5jfSlGhHDA.cache" "CFT5iggwJ14hCjyrTmvbYGB1LZxzSAPq4ACFw8EZIIg.cache" "VxUGxuQjgpuf5GbSHAaYLHZI6VPusq3LcQAlUWNBEXw.cache" "nCu53hE_3D17o3WxfU0O01fw1e_yd1fpe2csCfdIzQE.cache" "jqTWUsKfPEPa82FlUQnSv3yugaehySt7N3ZI-jeT8c8.cache" "kWJROciqh2oXdXrJTX5rRv0HEjy4wZh153w0BaYqEp4.cache" "QtDnx7EeHO4AbrMi_sj3KDxm8H_3_OeVmWOjfvSmiHs.cache" "APY89OAPJx9A3D3xcCoktvEvQUs7NcWChYXnjjjPzz0.cache" "Thnc_tTWq6vmHgFmvyN8WiFpVqq8VidsbeJTK2riCKU.cache" "KWp8pLzmEJ3u9y4zikSIg2hvAl9j3cFplYkvYlyMPjQ.cache" "xhOTQlCVwRrpYzEJqvsH8BKzseMlcukZ-PGJe9fswxU.cache" "qVX1mbUaztPpBJ_FAoz_KsnDT0aFzAQpYZ8YEIYlBqM.cache" "KjZ6Z8M9zsa_JC6YP-PXQmg6T7py1AzyI-DQ0c1kqmQ.cache" "R2nVEGSMtf665753oe2Mo3Z3L9x6O5CoBc0XO-b9UtY.cache" "qgv7_Gs1oDUpZFiSj2H9lvFL3DypupkPPm9NS6b5Nwc.cache" "gbPvc0T-8wMOaozcPCFqfB1uOExUg1SV56p3hOvXe2o.cache" "6uvVWnrsJa4jmKdXJnoJTd062FTSI6fkmZQccpyt9L8.cache" "WTEksYeeXcAWJN04ZR7GwMA-HmJn5wrJDVXZixdf-AU.cache" "KlutaWvTMDTEd7E3LtdZVtjQT4DtRC_jrmGHbQsmDd8.cache" "hBNhY_B_TX6MZdyEBKnniM_VQRV4u0D34Eho_UF3oNc.cache" "pRumrGaH7OhVYcDdjXxrTkkRAvK6lXHoK-C30ORP15M.cache" "Q_Og4fhq3GTphEDwig__pGS7Nxy7ZTA5CS7iZctNz14.cache" "7FkB6YH5JA8qyMXCXkC6w4dopDpKr-voyE8qm2Jc1Cc.cache" "hQ5_VA6ZX_R_r0jX2E_0tv6Z6kOwxSpW5V0GHGhx9Hs.cache" "weROhhxfrZos--U1bfLJseNO35WurzyDDQrUeg2ifR4.cache" "J_SbUQ1mUZmG5KDSA0N0Ern2bru-3WBTGToabcILD3A.cache" "1x47vaaLk1x6yABHqE_1jRNh4D_FvMXt-Sasl-rwyj0.cache" "w12NM4xt7i5Up1_UhGSr2swV1Es-GM9wIDXQAXa8j9o.cache" "n1y2HNtdn1-w8ZXb7okGGbsOAkJVF3S2UdNfJMqP4uw.cache" "71pea9h2tki-o1yDAffjrLEpjv4jUMiR6tXPDdq44ew.cache" "I65azlyFuGsotPFdgQcQtWTC4felTc63vF8uv1ZZ-e8.cache" "../" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/development/sprockets/" (22813 43392 460590 615000) "../" "v3.0/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/development/" (22813 43392 460590 615000) "../" "sprockets/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/assets/" (22813 43392 460590 615000) "../" "development/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/cache/" (22813 43015 455948 619000) "../" "assets/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/tmp/" (22813 43346 539409 480000) "pids/" "../" "sessions/" "sockets/" "cache/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/app/" (22813 43015 395952 385000) "../" "mailers/" "helpers/" "views/" "assets/" "models/" "controllers/" "./")
+
+ ("/home/guillermo/ruby/projects/Course/" (22813 43017 483821 350000) "app/" "public/" "vendor/" "../" "test/" "README.rdoc" "config.ru" "db/" ".gitignore" "Gemfile.lock" "tmp/" "config/" "lib/" "Gemfile" "log/" "./" "Rakefile" "bin/")
+
+ ("/home/guillermo/ruby/projects/" (22813 43015 343955 649000) "Course/" "../" "./")
+
+ ("/home/guillermo/ruby/" (22813 33686 220128 470000) "../" "projects/" "./")
+
+ ("/home/guillermo/SSDD/EDSU.2016/intermediario/" (22787 51398 866276 365000) "comun.o" "../" "comun.c" "#comun.c#" "intermediario.o" "comun.h" "intermediario.c" "temas" "intermediario" "./" "Makefile")
+
+ ("/home/guillermo/SSDD/EDSU.2016/editor/" (22787 51371 940061 879000) "comun.o" "test_editor.o" "../" "test_editor" "edsu_comun.c" "editor.o" "comun.c" "test_editor_avanz" "edsu_comun.o" "comun.h" "test_editor_avanz.c" "edsu_comun.h" "editor.c" "test_editor_avanz.o" "./" "editor.h" "Makefile" "test_editor.c")
+
+ ("/home/guillermo/SSDD/javadsm.2016/dsm/" (22808 11823 128742 367000) "../" "compila_y_construye_JARS.sh" "CerrojoImpl.java" ".metadata/" "CerrojoImpl.class" "ObjetoCompartido.java" "dsm_servidor.jar" "FabricaCerrojosImpl.class" "DSMCerrojo.java" "AlmacenImpl.class" "FabricaCerrojosImpl.java" "Almacen.java" "Almacen.class" "DSMCerrojo.class" "ObjetoCompartido.class" "Cerrojo.java" "CabeceraObjetoCompartido.java" "FabricaCerrojos.class" "FabricaCerrojos.java" "compila_fichero.sh" "dsm_cliente.jar" "./" "AlmacenImpl.java" "CabeceraObjetoCompartido.class" "Cerrojo.class")
+
+ ("/home/guillermo/SSDD/JavaDSM.2016/cliente/" (21354 819 0 0) "Contador.java" "../" "TestAlmacenInts.java" "cliente.permisos" "compila_programa.sh" "ejecuta_programa.sh" "TestCerrojoRemoto.java" "ClienteDSM.java" "TestAlmacenListaContadores.java" "TestAlmacenContador.java" "dsm_cliente.jar" "./" "TestAlmacenString.java")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/ARQUITECTURA/proyecto/" (22801 41557 488615 380000) "memoria.org" "../" "memoria.pdf" "es_int.lis" "es_int_working.h68" "es_int_working.lis" "es_int.h68" "./" "es_int.s" "memoria.tex")
+
+ ("/home/guillermo/UNIVERSIDAD/SEXTO SEMESTRE/" (22751 33563 580540 528000) "../" "SSDD/" "SOS/" "IS1/" "./")
+
+ ("/home/guillermo/SSDD/EDSU.2016/subscriptor/" (22787 29067 255349 37000) "test_subscriptor.c" "../" "edsu_comun.c" "comun.c" "subscriptor.c" "test_subscriptor_avanz.c" "comun.h" "edsu_comun.h" "subscriptor.h" "./" "Makefile")
+
+ ("/home/guillermo/SSDD/EDSU.2016/" (22709 41577 916145 43000) "../" "intermediario/" "editor/" "subscriptor/" "./")
+
+ ("/home/guillermo/SSDD/PracticaEdSub/intermediario/" (22786 65437 763863 614000) "comun.o" "../" "comun.c" ".#intermediario.c" "intermediario.o" "comun.h" "intermediario.c" "#intermediario.c#" "temas" "intermediario" "./" "Makefile")
+
+ ("/home/guillermo/SSDD/PracticaEdSub/subscriptor/" (22786 64057 882777 839000) "test_subscriptor.c" "../" "edsu_comun.c" "#subscriptor.c#" "comun.c" "subscriptor.c" ".#subscriptor.c" "test_subscriptor_avanz.c" "comun.h" "edsu_comun.h" "subscriptor.h" "./" "Makefile")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/client/" (22657 6393 816103 431000) "../" "CallbackClientTrait.scala" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/scala/client/" (22658 16351 422811 447000) "Messages.scala" "../" "Client.scala" "TerminalClient.scala" "#GUIClient.scala#" "GUIClient.scala" "CallbackClientTrait.scala" "./")
+
+ ("/home/guillermo/SSDD/PracticaEdSub/editor/" (22786 27754 796920 335000) "../" "edsu_comun.c" "comun.c" "#comun.c#" "comun.h" "test_editor_avanz.c" "edsu_comun.h" "editor.c" "./" "editor.h" "Makefile" "test_editor.c")
+
+ ("/home/guillermo/hashCode/evilcorp-hashcode-2017/" (22703 21529 540369 41000) "../" ".gitignore" "#distribuidor.py#" "distribuidor.py" "preparador.py" "./" ".git/" "#preparador.py#" "README.md")
+
+ ("/home/guillermo/ElectroVasco/" (22782 1653 327939 689000) "acm.css" "../" "acm.js" "LightningElectroVasco.tex" "LightningElectroVasco.pdf" "LightningElectroVasco.org" "LightningElectroVasco.html" "LightningElectroVasco.org~" "FotosLightning/" "./" "LightningElectroVasco.html~")
+
+ ("/home/guillermo/UNIVERSIDAD/TERCER SEMESTRE/PROGRAMACION PARA SISTEMAS/" (21873 32527 660551 846000) "C 3/" "avanzado_C.pdf" "../" "delreves.c" "bash1/" "secuencia.c" "cuaderno_unix.pdf" "practicas_2014-2015-1.pdf" "practicas/" "intro_C_jlp.pdf" "practicas_2014-2015-1(1).pdf" "mas_C.pdf" "C 2/" "bocabajo.c" "conectar ti" "practica pps.sh" "Ejemplos compilaci__n en C/" "bash 2/" "./" "C 1/" "ENVIAR CORRECCION PPS A CORREO" "minientrega.sh")
+
+ ("/home/guillermo/UNIVERSIDAD/TERCER SEMESTRE/" (22061 63954 256806 201000) "ESTRUCTURAS/" "../" "LENGUAJES/" "PROGRAMACION PARA SISTEMAS/" "MATEMATICA DISCRETA 2/" "./" "ALGORITMICA NUMERICA/" "ALGORITMOS Y ESTRUCTURA DE DATOS/")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/filtrar.2016a/" (22723 14626 566101 114000) "libfiltra_void.so" "libfiltra_alfa.c~" "filtrar.c~" "../" "direcPrueba/" "libfiltra_delay.c" "filtrar.h" "filtrar" "libfiltra_alfa.c" "libfiltra_void.c" "filtrar.c" "libfiltra_alfa.so" "#filtrar.c#" "./" "libfiltra_delay.so" "Makefile")
+
+ ("/home/guillermo/proyectoArquitectura/" (22782 9410 808048 324000) "memoria.org" "../" "AC_proyecto.2015b/" "puertob" "memoria.pdf" "consultas.bin" "puertoa" "fotos/" "dudas" "es_int.lis" "es_int_working.h68" "es_int_working.lis" "es_int.h68" "./" "missfont.log" "es_int.s" "memoria.tex")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/servidor.2016a/" (22717 59610 675319 456000) "../" "cliente" "lanzador.sh~" "cliente_src/" "servidor.c" "MakeVars" "prueba" "servidor.o" "puerto_servidor" "lanzador.sh" "message.h" "servidor.c~" "./" "\373~" "Makefile" "servidor")
+
+ ("/home/" (21823 19606 995276 692000) "../" "guillermo/" "./")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/PrácticasDiseño/" (22302 12521 148113 49000) "../" "servidor.2016a/" "filtrar.2016a/" "./")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/SISTEMAS OPERATIVOS/" (22353 14380 603813 698000) "PracticasAnalisis/" "so4m15pp_sol.pdf" "Tema 1/" "Tema Introduccion/" "../" "Tema 3/" "so4m15sc_sol.pdf" "PrácticasDiseño/" "problemas-GM.pdf" "PracMemoriaComents" " problemas-PP.pdf" "Tema 2/" "Ejercicios entrega/" "Tema 4/" "Respuestas ModProcesos" "problemasso2.pdf" "practicasdeanlisisssoo.zip" "problemas-SF.pdf" "so4m16pp-sol.pdf" "sistemasoperativosedic2.pdf" "problemas-SC.pdf" "./" "PracAnalisisSync")
+
+ ("/home/guillermo/UNIVERSIDAD/CUARTO SEMESTRE/" (22547 20088 86840 952000) "REDES/" "../" "ESTADISTICA 2/" "SISTEMAS OPERATIVOS/" "ARQUITECTURA/" "BASES DE DATOS/" "./" "CONCURRENCIA/")
+
+ ("/home/guillermo/UNIVERSIDAD/" (22681 35184 144425 502000) "SEXTO SEMESTRE/" "filtrar.chk" "../" "CUARTO SEMESTRE/" "Tipler tomo 1.pdf" "SEGUNDO SEMESTRE/" "PRIMER SEMESTRE/" "QUINTO SEMESTRE/" "./" "TERCER SEMESTRE/")
+
+ ("/home/guillermo/SSDD/PracticaEdSub/" (22709 41577 916145 43000) "../" "intermediario/" "editor/" "subscriptor/" "./")
+
+ ("/home/guillermo/proyectoArquitectura/AC_proyecto.2015b/" (22705 25870 932785 846000) "../" "corrector.txt" "pruebas_pasadas.txt" "cont.sh" "LICENSE" "./" "codigo_pruebas.s" ".git/" "README.md")
+
+ ("/home/guillermo/Escritorio/fo-schemas/" (17929 27548 0 0) "../" "schemas.xml" "xslfo/" "./")
+
+ ("/home/guillermo/.emacs.d/elpa/" (22685 34001 647475 303000) "flycheck-20170112.1646/" "company-20160829.1206/" "seq-2.19.signed" "jdee-20170109.1138/" "java-snippets-readme.txt" "dash-20161108.352/" "auto-complete-nxml-readme.txt" "../" "iasm-mode-20131004.1644/" "scala-mode-20160902.525/" "seq-2.19/" "htmlize-20130207.1202/" "ensime-20161031.246/" "highlight-indentation-20161012.209/" "pyvenv-20160527.442/" "s-20160928.636/" "magit-20161128.1456/" "sbt-mode-20161026.350/" "async-20161103.1036/" "ivy-20161108.540/" "popup-20160709.729/" "magit-popup-20161124.1041/" "git-commit-20161123.2204/" "find-file-in-project-20161026.145/" "arduino-mode-20151017.2335/" "jdee-readme.txt" "ox-reveal-20160719.28/" "yasnippet-20161026.1601/" "darkokai-theme-20160803.2058/" "pkg-info-20150517.443/" "archives/" "with-editor-20161109.403/" "let-alist-1.0.4/" "htmlize-readme.txt" "epl-20150517.433/" "org-20161102.signed" "0blayout-readme.txt" "auto-complete-nxml-20140220.2058/" "auto-complete-1.4/" "org-20161102/" "elpy-20161028.215/" "./" "iasm-mode-readme.txt" "memoize-20130421.1234/" "gnupg/" "ensime-readme.txt" "let-alist-1.0.4.signed" "java-snippets-20160626.1952/" "redis-20150531.1248/")
+
+ ("/home/guillermo/.emacs.d/elpa/iasm-mode-20131004.1644/" (22685 33999 783466 555000) "../" "iasm-mode.el" "iasm-mode-autoloads.el" "iasm-mode-pkg.el" "iasm-mode-pkg.elc" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/" (22657 63015 644466 529000) "quacker-client/" "../" "doc/" ".gitignore" "quacker-server/" "README.org" "readme.org" "./" ".git/" "README.md")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/" (22657 6393 776101 750000) "../" "src/" ".gitignore" "libexec/" "LICENSE" "build.sbt" "./" "project/" "bin/")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/" (22657 6393 792102 422000) "../" "test/" "main/" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/" (22657 6393 776101 750000) "../" "./" "scala/")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-client/src/main/scala/" (22657 6393 792102 422000) "server/" "../" "client/" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/server/" (22657 6393 816103 431000) "../" "ServerTrait.scala" "Server.scala" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/scala/" (22657 6393 816103 431000) "server/" "../" "client/" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/main/" (22657 6393 816103 431000) "../" "./" "scala/")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/" (22657 6393 816103 431000) "../" "test/" "main/" "./")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/" (22657 6393 816103 431000) "../" "src/" ".gitignore" "libexec/" "LICENSE" "build.sbt" "./" "project/" "bin/")
+
+ ("/home/guillermo/practica1-JMS/" (22655 17140 902878 363000) "redis-database/" "../" "login/" "chat-1.0/" ".gitignore" "scripts/" "mini-chat/" "target/" "images/" "readme.org" "swing-examples/" "scala-examples/" "./" ".git/" "README.md")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/test/scala/" (22645 35501 887367 367000) "../" "./" "HelloSpec.scala")
+
+ ("/home/guillermo/GIT/practica-twitter-quacker/quacker-server/src/test/" (22645 35501 887367 367000) "../" "./" "scala/")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/docs/madrid/pollution/" (22654 647 660388 896000) "../" "assets/" "./" "madrid_pollution_sequence_diagram.svg" "README.adoc")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/docs/madrid/" (22654 647 644389 575000) "cofm/" "../" "bloodgiving/" "./" "pollution/")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/docs/" (22654 647 660388 896000) "../" "gencat/" "class_diagram_all.svg" "dgt/" "cap/" "aemet/" "exploitation.adoc" "sytadin/" "srs.adoc" "architecture/" "madrid/" "./" "UPM_DW_API_Specification_v3.1.html" "aeonflux.odt")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/com/deveryware/streams/" (22654 647 268405 545000) "../" "gencat/" "HTTPPoster.java" "MultiHTTPReader.java" "sytadin/" "XMLFileReader.java" "MultiHTTPFormReader.java" "package-info.java" "./" "StreamReader.java" "MultiHTTPPoster.java" "HTTPReader.java")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/com/deveryware/alert/" (22654 647 240406 734000) "../" "Category.java" "Polygon.java" "Point.java" "Circle.java" "Severity.java" "./" "Alert.java" "Location.java")
+
+ ("/home/guillermo/JAVA/" (22654 1807 752365 114000) "../" "example1.java" "./")
+
+ ("/home/guillermo/GIT/WORK/aeonflux/aeonflux/src/main/java/com/deveryware/" (22654 647 268405 545000) "../" "storage/" "watcher/" "alert/" "utils/" "Main.java" "streams/" "Fetcher.java" "geolocation/" "./" "service/" "analyzer/")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

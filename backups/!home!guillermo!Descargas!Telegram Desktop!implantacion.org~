@@ -1,0 +1,49 @@
+#+TITLE: IMPLANTACIÓN MODELO CONCEPTUAL
+\newline
+#+AUTHOR: Guillermo Paredes López, v130230 \\
+#+AUTHOR: Andrés Cardozo Blanco, w140032 \\
+#+AUTHOR: Agustín Giménez Ibáñez, u120198 \\
+#+AUTHOR: Álvaro Jiménez Paniagua, u120263 \\
+\newpage
+* INTRODUCCIÓN
+Esta documentación explica la implantación de la arquitectura modelizada para aplicaciones web, especificando sus componentes
+y la interacción entre ellos a través de diagramas físicos y lógicos. La implantación se ha realizado basándonos en
+un modelo de elaboración de programas de estudio.
+
+* DEFINICIÓN DE LA IMPLANTACIÓN
+** Descripción del propósito del sistema
+El sistema se encarga de elaborar diversos programas de estudio mediante un formulario, almacenando los programas creados en una
+base de datos. Este sistema sigue el modelo vista/controlador, por lo que existen una serie de componentes controlador que se encargan tanto
+de acceder a los modelos de programa creados por los usuarios como de manejar la representación de los mismos mediante una representación html.
+Estas acciones se realizan en función del tipo de solicitud realizada por los usuarios al sistema.
+Los componentes controlador también se encargan de la interacción con la base de datos, a través de un objeto manejador de la interacción. \newline
+El sistema ha sido diseñado de manera local mediante el framework Ruby on Rails. Una vez puesto en marcha el servidor, se accede al servicio web mediante
+introduciendo la dirección http://localhost:3000/study_programs.
+
+** Tabla de emparejamiento
+La tabla de emparejamiento es la siguiente
+\\
+
+\begin{table}[h]
+\centering
+\begin{tabular}[h]{|l|l|}
+\hline
+\textbf{Componente} & \textbf{Capa}       \\ \hline
+study\_programs\_controller.rb & controlador \\ \hline
+study\_programs.coffe          & controlador \\ \hline
+study\_programs.css            & controlador \\ \hline
+study\_programs/index.html.erb & vista       \\ \hline
+database.yml                   & tabla       \\ \hline
+study\_program.rb              & modelo      \\ \hline
+routes.rb                      & controlador \\ \hline
+\end{tabular}
+\end{table}
+
+
+** Diagramas UML
+Los diagramas UML son los siguientes:
+*** Perspectiva física
+[[./DiagramaFisicoImplantacion.jpg]]
+*** Perspectiva lógica
+[[./DiagramaLogicoImplantacion.jpg]]
+* CONCLUSIONES

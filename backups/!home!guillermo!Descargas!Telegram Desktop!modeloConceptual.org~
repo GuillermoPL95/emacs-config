@@ -1,0 +1,69 @@
+#+TITLE: MODELO CONCEPTUAL
+\newline
+#+AUTHOR: Guillermo Paredes López, v130230 \\
+#+AUTHOR: Andrés Cardozo Blanco, w140032 \\
+#+AUTHOR: Agustín Giménez Ibáñez, u120198 \\
+#+AUTHOR: Álvaro Jiménez Paniagua, u120263 \\
+
+\newpage
+
+* INTRODUCCIÓN
+Esta documentación incluye la modelización de una arquitectura para aplicaciones web, especificando sus componentes
+y la interacción entre ellos a través de diversos diagramas.
+* DEFINICIÓN DE LA SOLUCIÓN
+** Descripción del propósito del sistema
+La finalidad del sistema planteado es la de permitir a los usuarios que la utilicen el
+acceso a las entidades de una aplicación web de forma uniforme tanto para un usuario de
+aplicación de escritorio como para un usuario de aplicación móvil. Por ello, la arquitectura
+del sistema es similar para ambos casos.
+Sin embargo, el usuario de aplicación móvil debe tener solamente permisos de lectura de la
+entidad, mientras que el usuario de aplicación de escritorio puede crear, modificar y eliminar
+entidades. \newline
+Para guardar las entidades el sistema incluye en su arquitectura una base de datos relacional a la
+que solicitar consultas e insertar datos, en caso de modificacion o creación de entidades.
+** Componentes
+El modelo de la arquitectura se basa en tres capas: \newline
+-una capa Interfaz, que representa la interfaz donde se muestra la información del sistema de cara al usuario \newline
+-una capa Entidad, que representa la entidad que está siendo consultada o modificada por el usuario. \newline
+-una capa Datos, que representa los datos que componen la entidad. \newline
+Las tres capas que componen el sistema se engloban en el Servidor de Aplicaciones, al que tendrán acceso tanto los usuarios de aplicación
+de escritorio como los usuarios de aplicación móvil. El Servidor de Aplicaciones, a su vez, accederá al servidor de la base de datos para
+obtener los datos correspondientes a las entidades. \newline
+
+
+
+** Perspectivas y diagramas de secuencia
+*** Perspectiva lógica del sistema
+[[./DiagramaLogico.jpg]]
+*** Perspectiva física del sistema
+[[./DiagramaFisico.jpg]]
+*** Diagramas de secuencia
+**** Aplicación móvil
+[[./DiagramaSecuenciaMovil.jpg]]
+**** Aplicación de escritorio
+[[./DiagramaSecuenciaPC.jpg]]
+
+** Descripción de los métodos
+\newline
+*Interfaz* \\
+- ConsultarDatos(filtros) :: Hace una petición  de consulta de datos en base a
+     un orden, tipo, etc.
+- Validar() :: Obtiene los credenciales del usuario que ejecuta la operación y
+               comprueba que ese usuario tiene permisos para ejecutar esas
+               operaciones.
+- EnseniarDatos() :: Muestra los datos buscados por pantalla.
+- Seleccionar(opción) :: Te permite seleccionar una opcion (modificar, crear o
+     borrar entidad) una vez se ha realizado la consulta.
+- ModificarEntidad(nDatos) :: Escribe los datos que desean ser cambiados.
+
+*AccesoEntidad* \\
+- BuscarEntidad(filtros) :: Procesa los datos devueltos por ConsultarDatos()
+     enviandoselos a  ObtenerDatos().
+- RealizarModificacion(NDatos) :: Procesa los datos devueltos por
+     ModificarDatos() enviandoselos a InsertarDatos().
+
+*DAOConsultaDeDatos* \\
+- ObtenerDatos(filtros) :: Extrae los datos de la base de datos y se los envia a
+     AccesoEntidad.
+- InsertarDatos(NDatos) :: Modific los datos en la base de datos y se lo
+     notifica a AccesoEntidad.

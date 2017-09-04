@@ -1,0 +1,292 @@
+/* DMUTEX (2009) Sistemas Operativos Distribuidos
+ * Código de Apoyo
+ *
+ * ESTE CÓDIGO DEBE COMPLETARLO EL ALUMNO:
+ *    - Para desarrollar las funciones de mensajes, reloj y
+ *      gestión del bucle de tareas se recomienda la implementación
+ *      de las mismas en diferentes ficheros.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <error.h>
+#include <fcntl.h>
+
+
+typedef struct mensaje{
+  char tipo[50];
+  char id[80];
+  char seccion[20];
+  int LC[10];
+} msg_t;
+
+typedef struct proceso{
+  char id[80];
+  int puerto;
+  int indice;
+  struct proceso *next;
+} proceso_t;
+
+
+/*Funcion que aniade un nuevo nodo a la lista de procesos*/
+proceso_t* addProceso (proceso_t *cola, char *nombre, int puerto, int indice);
+
+/*Funcion que devuelve el puntero pasado como entrada apuntando al nodo del proceso*/
+int buscarProceso(proceso_t *iterador, char *id, int len);
+
+
+
+
+
+int puerto_udp;
+
+int main(int argc, char* argv[])
+{
+  
+  int propio, port, sockfd, *LC, puerto_cliente, len, i;
+  int contadorIndice = 0;
+  int cogido = 0;
+  int nOks = 0; 
+  char line[80],proc[80], accion[80], idPropio[20], semaforo[10];
+  struct sockaddr_in dir, cliente;
+  proceso_t *head = NULL, *iterador;
+  msg_t mensaje;
+  
+  if(argc<2)
+  {
+    fprintf(stderr,"Uso: proceso <ID>\n");
+    return 1;
+  }
+
+  /* Establece el modo buffer de entrada/salida a línea */
+  setvbuf(stdout,(char*)malloc(sizeof(char)*80),_IOLBF,80);
+  setvbuf(stdin,(char*)malloc(sizeof(char)*80),_IOLBF,80);
+
+  
+  /*Se establece el socket UDP con el puerto indicado*/  
+  sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+  bzero((char *)&dir, sizeof(dir));
+  dir.sin_family = AF_INET;
+  dir.sin_port =htons(0);
+  dir.sin_addr.s_addr = INADDR_ANY;
+  /*Socket listo*/
+  bind(sockfd, (struct sockaddr *)&dir, sizeof(dir));
+  
+  /*obtenemos valor del puerto*/
+  len = sizeof(dir);
+  getsockname(sockfd, (struct sockaddr *)&dir, (socklen_t *)&len);
+  puerto_udp=ntohs(dir.sin_port); /* Se determina el puerto UDP que corresponda.
+                      Dicho puerto debe estar libre y quedará
+                      reservado por dicho proceso. */
+  
+
+  /*Se imprime identificador y puerto del proceso*/
+  fprintf(stdout,"%s: %d\n",argv[1],puerto_udp);
+  
+  /*Se leeen los identificadores de procesos y sus puertos*/
+  for(;fgets(line,80,stdin);)
+  {
+    if(!strcmp(line,"START\n"))
+      break;
+
+    sscanf(line,"%[^:]: %d",proc,&port);
+    /* Habra que guardarlo en algun sitio */
+
+    if(!strcmp(proc,argv[1])){ /* Este proceso soy yo */
+      strcpy(idPropio, argv[1]);
+      propio = contadorIndice;
+      }
+    
+    /*Nuevo proceso incluido en la lista de procesos*/
+    if(head == NULL){
+      /*Establecemos el primer nodo proceso de la lista de procesos*/
+      head = (proceso_t*) malloc(sizeof(proceso_t));
+      strcpy(head->id, proc);
+      head->puerto = port;
+      head->indice = contadorIndice;
+      contadorIndice++;
+      /*iterador apuntando al comienzo de la lista*/
+      iterador = head;      
+    }
+    
+    else{
+      iterador = addProceso (iterador, proc, port, contadorIndice);
+      contadorIndice++;
+    }
+    
+  }    
+  /* Inicializar Reloj */
+  LC = malloc(sizeof(int)*(contadorIndice));
+  
+  /* Procesar Acciones */
+    while(1){
+    /*Leer la accion a realizar*/
+    scanf("%s", accion);
+    
+    if(!strcmp(accion,"EVENT")){
+      /*Evento: se incrementa el reloj del proceso y se imprime traza TICK*/
+      LC[propio]++;
+      printf("%s: TICK\n", argv[1]);
+    }
+    
+    else if(!strcmp(accion,"GETCLOCK")){
+      /*GETCLOCK: se imprime el reloj logico*/
+      printf("%s: LC[", argv[1]);
+      int i ;
+      for(i = 0; i < contadorIndice-1; i++){
+	printf("%d,", LC[i]);
+      }
+      printf("%d]\n", LC[contadorIndice-1]);
+    }
+
+    
+    else if(!strcmp(accion,"MESSAGETO")){
+      /*MESSAGETO: se lee identificador del proceso a enviar mensaje*/      
+      scanf("%s", accion);
+      /*Buscamos el nodo correspondiente al proceso*/
+      iterador = head;
+      
+      /*Incrementamos reloj */
+      LC[propio]++;
+      
+      puerto_cliente =  buscarProceso(iterador, accion, contadorIndice);
+      /*TODO implementar casos de fallo*/
+      /*mensaje a enviar*/
+      cliente.sin_family = AF_INET;
+      cliente.sin_port = htons(puerto_cliente);
+      cliente.sin_addr.s_addr = INADDR_ANY;
+      strcpy(mensaje.tipo, "MSG");
+      strcpy(mensaje.id, idPropio);
+      memcpy(&mensaje.LC, LC, sizeof( int ) * contadorIndice );
+      sendto(sockfd, &mensaje, sizeof(mensaje), 0, (struct sockaddr *)&cliente, sizeof(cliente));
+      
+      printf("%s: TICK\n", idPropio);
+      printf("%s: SEND(MSG,%s)\n", idPropio, accion);
+      /*COMPROBAR SI ESTO FUNCIONA*/
+    }
+        
+    else if(!strcmp(accion,"RECEIVE")){
+      /*Recibimos mensaje*/
+      len = sizeof(cliente);
+      recvfrom (sockfd, &mensaje, sizeof(mensaje), 0, (struct sockaddr *)&cliente, (socklen_t *)&len);
+      /*Incrementamos reloj por evento*/
+      LC[propio]++;
+      /*Actualizamos relojes de procesos*/
+      for(i = 0 ; i < contadorIndice ; i++){	
+	if(LC[i] < mensaje.LC[i]){
+	  LC[i] = mensaje.LC[i];
+	}
+      }
+      
+      printf("%s: RECEIVE(%s,%s)\n", idPropio, mensaje.tipo, mensaje.id);
+      printf("%s: TICK\n", idPropio);
+      
+      
+      /*mensaje de LOCK*/
+      if(!strcmp(mensaje.tipo,"LOCK")){
+
+	if(strcmp(mensaje.seccion, semaforo) != 0){
+	  /*No tengo el semaforo, envio OK*/
+	  strcpy(proc, mensaje.id);
+	  iterador = head;
+	  puerto_cliente =  buscarProceso(iterador, mensaje.id, contadorIndice);
+	  cliente.sin_family = AF_INET;
+	  cliente.sin_port = htons(puerto_cliente);
+	  cliente.sin_addr.s_addr = INADDR_ANY;
+	  strcpy(mensaje.tipo, "OK");
+	  strcpy(mensaje.id, idPropio);
+	  sendto(sockfd, &mensaje, sizeof(mensaje), 0, (struct sockaddr *)&cliente, sizeof(cliente));
+	  LC[propio]++;
+	  printf("%s: TICK\n", idPropio);
+	  printf("%s: SEND(OK,%s)\n", idPropio, proc);
+	}
+      }
+      
+      /*mensaje de confirmacion*/
+      else if(!strcmp(mensaje.tipo,"OK")){
+	nOks++;
+	if( cogido == 0 && nOks == contadorIndice-1){
+	  printf("%s: MUTEX(%s)\n", idPropio, semaforo);
+	  cogido = 1;
+	}
+      }                       
+    }
+
+    
+    else if(!strcmp(accion,"LOCK")){
+      /*Leemos seccion a la que se quiere acceder*/
+      scanf("%s", semaforo);
+      /*Incrementamos reloj por evento y colocamos contador de Oks a cero*/
+      LC[propio]++;
+      printf("%s: TICK\n", idPropio);
+      nOks = 0;
+      
+      iterador=head;
+      /*bucle de envío de mensajes*/      
+      while(iterador != NULL){
+	/*for(i = 0 ; i < contadorIndice ; i++){*/
+	/*Enviamos mensaje LOCK a todos los procesos*/		
+	if(strcmp(iterador->id, idPropio) != 0){
+	  
+	  cliente.sin_family = AF_INET;
+	  cliente.sin_port = htons(iterador->puerto);
+	  cliente.sin_addr.s_addr = INADDR_ANY;
+	  strcpy(mensaje.tipo, "LOCK");
+	  strcpy(mensaje.id, idPropio);
+	  strcpy(mensaje.seccion, semaforo);
+	  memcpy(&mensaje.LC, LC, sizeof( int ) * contadorIndice );
+	  sendto(sockfd, &mensaje, sizeof(mensaje), 0, (struct sockaddr *)&cliente, sizeof(cliente));
+	  printf("%s: SEND(LOCK,%s)\n", idPropio, iterador->id);	
+	}
+	iterador = iterador->next;
+      }
+    }
+    
+    else if(!strcmp(accion,"UNLOCK")){
+      /*TODO: EVERYTHING*/
+      /*      strcpy(semaforo, "");*/
+      cogido = 0;
+    }
+    else if(!strcmp(accion,"FINISH")){
+      break;
+    }    
+  }
+    
+  return 0;
+}
+
+
+
+proceso_t* addProceso (proceso_t *cola, char *nombre, int puerto, int indice) {
+
+  proceso_t *nuevo = (proceso_t *)malloc (sizeof(proceso_t));
+  strcpy (nuevo->id, nombre);
+  nuevo->puerto = puerto;
+  nuevo->indice = indice;
+  cola->next = nuevo;
+  return nuevo;
+}
+
+int buscarProceso(proceso_t *iterador, char *id, int len){
+
+  int puerto = 0;
+  int i;
+  for(i = 0; i< len; i++ ){
+    if(strcmp(iterador->id, id)==0){
+      
+      puerto = iterador->puerto;
+      break;
+    }
+    iterador = iterador->next;
+  }
+  return puerto;
+}
+

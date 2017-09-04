@@ -1,0 +1,321 @@
+#+TITLE: MEMORIA PROYECTO E/S
+\newline 
+#+AUTHOR: Guillermo Paredes López, v130230 \\
+#+AUTHOR: Jesús Antonio Bella Martí, v130331 \newpage
+
+
+* Introducción
+En esta memoria se explica detalladamente el funcionamiento y proceso de realización del proyecto de entrada/salida de arquitectura de computadores.
+Se mostrarán tanto los diagramas con el comportamiento de las subrutinas como una pequeña descripción de cada una de ellas, además de un conjunto de casos de prueba
+realizados para probar que el código funciona correctamente. 
+
+* Diagramas de flujo 
+Se presentan los diagramas de flujo respectivos a cada subrutina 
+** PRINT
+[[/home/guillermo/proyectoArquitectura/fotos/PRINT.jpeg]]
+
+** SCAN
+[[/home/guillermo/proyectoArquitectura/fotos/SCAN.jpeg]]
+
+** RTI
+[[/home/guillermo/proyectoArquitectura/fotos/RTI.jpeg]]
+
+** LEECAR
+[[/home/guillermo/proyectoArquitectura/fotos/LEECAR.jpeg]]
+
+** ESCCAR
+[[/home/guillermo/proyectoArquitectura/fotos/ESCCAR.jpeg]]
+
+** LINEA
+[[/home/guillermo/proyectoArquitectura/fotos/LINEA.jpeg]]
+
+* Listado comentado de las subrutinas
+El programa se compone de las siguiente subrutinas:
+** INIT
+La subrutina INIT se encarga de inicializar tanto las características de la DUART para ambos puertos
+(velocidad, Eco,....) como de indicar la posición de la RTI en memoria e inicializar los bufferes internos.
+** PRINT
+La subrutina PRINT recibe una dirección de la que va a leer los caracteres que se le indiquen y los escribirá
+por la línea que se le indique. Si la subrutina ha escrito una línea en algún momento, se encargará 
+de activar la interrupción de transmisión para que la RTI saque los caracteres por un puerto.
+** SCAN
+La subrutina SCAN lee los caracteres del buffer interno que se le indique y los escribe en una dirección de 
+memoria que también le sea indicada. Dicha dirección de memoria es la misma de la que posteriormente leerá 
+PRINT los caracteres. 
+** RTI
+Cuando hay interrupciones habilitadas, la RTI se encarga de manejarlas y realizar diferentes tareas 
+en función de la interrupción generada. Si la interrupción es de recepción, la RTI se encarga de escribir 
+en un buffer interno indicado el carácter escrito por el puerto.Si la interrupción es de transmisión,
+la RTI lee del buffer interno un carácter y lo escribe por el puerto indicado. Si el carácter escrito es un retorno de carro,
+la RTI escribirá un salto de línea en la siguiente entrada y comprobará si existe una línea en el buffer interno lista para ser
+escrita.
+** LEECAR
+La subrutina LEECAR es llamada para extraer un carácter de uno de los bufferes circulares implementados.
+Esta subrutina se encarga de manejar correctamente los punteros del buffer circular del que está leyendo.
+** ESCCAR
+La subrutina ESCCAR inserta un carácter pasado como parámetro de entrada en el buffer circular indicado como entrada.
+Esta subrutina también debe manejar correctamente los punteros del buffer circular en el que escribe.
+** LINEA
+La subrutina LINEA busca si hay una línea en el buffer circular indicado como entrada. Si existe, devuelve el número de 
+caracteres que componen la línea. Al contrario que ESCCAR y LEECAR, esta subrutina no modifica los punteros del buffer 
+circular.
+
+* Conjunto de casos de prueba
+Hemos utilizado estos casos de prueba(con ligeras variaciones a lo largo del desarrollo) para realizar las pruebas correspondientes
+del código.
+** Prueba para PRINT
+#+BEGIN_SRC asm
+PRUEBAS:	*manejadores de excepciones
+	MOVE.L	#BUS_ERROR,8	* Bus error handler
+	MOVE.L	#ADDRESS_ER,12	*Address error handler
+	MOVE.L	#ILLEGAL_IN,16	*Illegal instruction handler
+	MOVE.L	#PRIV_VIOLT,32	*Privilege violation handler
+
+	BSR 	INIT
+
+	MOVE.W	#$2000,SR	* Permite interrupciones
+
+	MOVE.L  #0,D6
+	MOVE.L	#BUFFERP,A5	
+BS:	MOVE.B	#$31,(A5)+
+	MOVE.B	#$32,(A5)+
+	MOVE.B	#$33,(A5)+
+	MOVE.B	#$34,(A5)+
+	MOVE.B	#$35,(A5)+
+	MOVE.B	#$36,(A5)+
+	MOVE.B	#$37,(A5)+
+	MOVE.B	#$38,(A5)+
+	MOVE.B	#$39,(A5)+
+	MOVE.B	#$30,(A5)+
+	ADD.L	#1,D6
+	CMP.L	#190,D6
+	BNE	BS	
+	MOVE.B	#13,(A5)
+
+	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+	MOVE.W	#1901,-(A7)
+	MOVE.W	#1,-(A7)
+	MOVE.L	DIRLEC,-(A7)
+	BSR	PRINT
+	BREAK
+
+#+END_SRC
+** Prueba del manual
+#+BEGIN_SRC asm
+BUFFERP: DS.B 	2100 		* Buffer para lectura y escritura de caracteres
+CONTL:	DC.W  	1 		* Contador de lineas
+CONTC:	DC.W  	1001		* Contador de caracteres
+DIRLEC:	DC.L	5000		* Direccion de lectura para SCAN
+DIRESC:	DC.L	5000		* Direccion de escritura para PRINT
+TAME:	DC.W	1001 		* Tamanio escritura PRINT
+DESA:	EQU	0		* Descriptor linea A
+DESB:	EQU	1		* Descrptor linea B
+NLIN:	EQU	1		* Numero lineas a leer
+TAML:	EQU	1001		* Tam linea SCAN
+TAMB:	EQU	1001		* Tam bloque PRINT
+
+PRUEBAS:	*manejadores de excepciones
+	MOVE.L	#BUS_ERROR,8	* Bus error handler
+	MOVE.L	#ADDRESS_ER,12	*Address error handler
+	MOVE.L	#ILLEGAL_IN,16	*Illegal instruction handler
+	MOVE.L	#PRIV_VIOLT,32	*Privilege violation handler
+
+	BSR 	INIT
+
+	MOVE.W	#$2000,SR	* Permite interrupciones
+	
+BUCPR:	MOVE.W	#0,CONTC	* Inicializa contador de caracteres
+	MOVE.W	#NLIN,CONTL	* Inicializa contadore de Lineas
+	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+OTRAL:	MOVE.W	#TAML,-(A7)	* Tamanio maximo de la linea
+	MOVE.W	#DESA,-(A7)	* Puerto A
+	MOVE.L	DIRLEC,-(A7)	* Direccion de lectura
+ESPL:	BSR 	SCAN
+	CMP.L	#0,D0
+	BEQ	ESPL		* Si no se ha leido una linea se intenta de nuevo
+	ADD.L	#8,A7		* Restablece la pila
+	ADD.L	D0,DIRLEC	* Calcula la nueva direccion de lectura
+	ADD.W	D0,CONTC	* Actualiza el numero de caracteres leidos
+	SUB.W	#1,CONTL	* Actualiza el numero de lineas leidas
+	BNE	OTRAL		* Se han leido todas la lineas se vuelve a leer
+
+	MOVE.L	#BUFFERP,DIRLEC	* Direccion de lectura = comienzo del buffer
+OTRAE:	MOVE.W	#TAMB,TAME	* Tamanio de escritura = Tamanio de bloque
+ESPE:	MOVE.W	TAME,-(A7)	* Tamanio de escritura
+	MOVE.W	#DESB,-(A7)	* Puerto B
+	MOVE.L	DIRLEC,-(A7)	* Direccion de lectura
+	BSR	PRINT
+	ADD.L	#8,A7		* Restablece la pila
+	ADD.L	D0,DIRLEC	* Calcula la nueva direccion del buffer
+	SUB.W	D0,CONTC	* ACtualiza el contador de caracteres
+	BEQ	SALIR		* Si no quedan caracteres se acaba
+	SUB.W	D0,TAME		* Actualiza el tamanio de escritura
+	BNE	ESPE		* Si no se ha escrito todo el bloque se insiste
+	CMP.W	#TAMB,CONTC	* Si el nº de caracteres que quedan es menor que el
+				* tamanio establecido se transmite ese numero
+
+	BHI	OTRAE		* Siguiente bloque
+	MOVE.W	CONTC,TAME
+	BRA 	ESPE		* Siguiente bloque
+
+SALIR:	BRA	BUCPR
+
+FINPR:	BREAK
+	
+BUS_ERROR:
+	BREAK			*Bus error handler
+	NOP
+ADDRESS_ER:
+	BREAK			*Bus error handler
+	NOP
+ILLEGAL_IN:
+	BREAK			*Illegal instruction handler
+	NOP
+PRIV_VIOLT:
+	BREAK			*Privilege violation handler
+	NOP
+
+#+END_SRC
+** Prueba 22 del gestor
+#+BEGIN_SRC asm
+		MOVE.L	#0,D5	*Contador
+PR22:		MOVE.L	#1,D0
+		MOVE.L  #0,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+  		MOVE.L	#1,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+  		MOVE.L	#2,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#3,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#4,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#5,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#6,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#7,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#8,D1
+		BSR ESCCAR
+		MOVE.L	#1,D0
+   		MOVE.L	#9,D1
+		BSR ESCCAR
+		ADD.L	#1,D5
+		CMP.L	#100,D5
+		BNE	PR22
+		MOVE.L	#1,D0
+		MOVE.L	#13,D1
+		BSR	ESCCAR *Escribimos el retorno de carro para finalizar linea de 1000 caracteres
+		MOVE.L	#1,D0
+		BSR	LINEA
+		BREAK
+
+#+END_SRC
+
+** Prueba PRINT y SCAN
+#+BEGIN_SRC asm
+INF:		MOVE.L	#0,D0
+		BSR LINEA
+		CMP.L	#0,D0
+		BEQ	INF
+		MOVE.W  D0,-(A7) *Tamanio
+		MOVE.W  #0,-(A7)  *Descriptor
+		MOVE.L  #$5000,-(A7) *Buffer
+
+		BSR SCAN
+		BREAK
+	
+		MOVE.L  #0,D5   *contador para salir del bucle 
+BUCPRU:		MOVE.L  #0,D0	
+                *Para probar SCAN escribiendo en las lineas de comandos del bsvc
+		MOVE.L  #$61,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+  		MOVE.L	#$62,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+  		MOVE.L	#$63,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$64,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$65,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$66,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$67,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$68,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$69,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6A,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6B,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6C,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6D,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6E,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$6F,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$70,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$71,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$72,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$73,D1
+		BSR ESCCAR
+		MOVE.L	#0,D0
+   		MOVE.L	#$74,D1
+		BSR ESCCAR
+		ADD.L 	#1,D5
+		CMP.L 	#50,D5
+		BEQ	FUERAB
+		BRA 	BUCPRU
+	
+FUERAB:		MOVE.L	#0,D0
+   		MOVE.L	#13,D1
+		BSR ESCCAR
+	
+		MOVE.W  #1001,-(A7) *Tamanio
+		MOVE.W  #0,-(A7)  *Descriptor
+		MOVE.L  #$5000,-(A7) *Buffer
+
+		BSR SCAN
+		BREAK
+
+#+END_SRC
+
+* Observaciones finales 
+La realización del proyecto nos ha llevado dos matrículas de la asignatura. Esto quiere decir que nos hemos encontrado con dificultades tales como la propia complejidad
+del proyecto y otras inesperadas como los bugs existentes del emulador del procesador o los problemas a la hora de replicar las pruebas del gestor.
+Consideramos una dificultad artificial el no poder tener acceso a las pruebas en cualquier momento y tener un número limitado de pruebas. El tiempo total empleado en la 
+realización de la práctica, teniendo en cuenta que nos ha llevado dos cursos, lo estimamos en unas 100 horas. 

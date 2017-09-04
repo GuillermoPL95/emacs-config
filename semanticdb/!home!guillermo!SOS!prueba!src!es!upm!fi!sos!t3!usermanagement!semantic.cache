@@ -1,0 +1,50 @@
+;; Object usermanagement/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "usermanagement/"
+  :tables
+  (list
+    (semanticdb-table "UserManagementWSSkeleton.java"
+      :major-mode 'jdee-mode
+      :tags 
+        '( ("es.upm.fi.sos.t3.usermanagement" package nil nil [170 210])
+            ("UserManagementWSSkeleton" type
+               (:typemodifiers ("public")
+                :members 
+                  ( ("logout" function
+                       (:typemodifiers ("public")
+                        :type "void")
+                        (reparse-symbol class_member_declaration) [486 673])
+                    ("login" function
+                       (:typemodifiers ("public")
+                        :arguments 
+                          ( ("user" variable (:type "es.upm.fi.sos.t3.usermanagement.User") (reparse-symbol formal_parameters) [972 1013]))                          
+                        :type "es.upm.fi.sos.t3.usermanagement.Response")
+                        (reparse-symbol class_member_declaration) [880 1254])
+                    ("addUser" function
+                       (:typemodifiers ("public")
+                        :arguments 
+                          ( ("user1" variable (:type "es.upm.fi.sos.t3.usermanagement.User") (reparse-symbol formal_parameters) [1557 1599]))                          
+                        :type "es.upm.fi.sos.t3.usermanagement.Response")
+                        (reparse-symbol class_member_declaration) [1463 1842])
+                    ("changePassword" function
+                       (:typemodifiers ("public")
+                        :arguments 
+                          ( ("passwordPair" variable (:type "es.upm.fi.sos.t3.usermanagement.PasswordPair") (reparse-symbol formal_parameters) [2159 2216]))                          
+                        :type "es.upm.fi.sos.t3.usermanagement.Response")
+                        (reparse-symbol class_member_declaration) [2058 2466])
+                    ("removeUser" function
+                       (:typemodifiers ("public")
+                        :arguments 
+                          ( ("username" variable (:type "es.upm.fi.sos.t3.usermanagement.Username") (reparse-symbol formal_parameters) [2775 2824]))                          
+                        :type "es.upm.fi.sos.t3.usermanagement.Response")
+                        (reparse-symbol class_member_declaration) [2678 3070]))                  
+                :type "class")
+                nil [298 3082]))          
+      :file "UserManagementWSSkeleton.java"
+      :pointmax 3087
+      :fsize 3086
+      :lastmodtime '(22822 58070 977355 547000)
+      :unmatched-syntax nil))
+  :file "!home!guillermo!SOS!prueba!src!es!upm!fi!sos!t3!usermanagement!semantic.cache"
+  :semantic-tag-version "2.0"
+  :semanticdb-version "2.2")

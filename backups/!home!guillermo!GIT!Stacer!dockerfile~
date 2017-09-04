@@ -1,0 +1,8 @@
+# Working directory
+WORKDIR /app
+
+# Add all the files from the directory into the container one
+ADD . /app
+
+# Run Stacer when the container launches
+CMD ["./stacer-1.0.7-x86_64.AppImage"]

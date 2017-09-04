@@ -1,0 +1,130 @@
+;; Object dsm/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "dsm/"
+  :tables
+  (list
+    (semanticdb-table "CerrojoImpl.java"
+      :major-mode 'jdee-mode
+      :tags 
+        '( ("dsm" package nil nil [1 13])
+            ("java.rmi.*" include nil nil [14 32])
+            ("java.rmi.server.*" include nil nil [33 58])
+            ("java.lang.Object" include nil nil [59 83])
+            ("CerrojoImpl" type
+               (:interfaces ("Cerrojo")
+                :superclasses "UnicastRemoteObject"
+                :members 
+                  ( ("lectores" variable
+                       (:typemodifiers ("private")
+                        :type "int")
+                        (reparse-symbol class_member_declaration) [155 176])
+                    ("escritores" variable
+                       (:typemodifiers ("private")
+                        :type "int")
+                        (reparse-symbol class_member_declaration) [178 201])
+                    ("CerrojoImpl" function
+                       (:constructor-flag t
+                        :throws ("RemoteException"))
+                        (reparse-symbol class_member_declaration) [208 292])
+                    ("adquirir" function
+                       (:throws ("RemoteException")
+                        :typemodifiers ("public" "synchronized")
+                        :arguments 
+                          ( ("exc" variable (:type "boolean") (reparse-symbol formal_parameters) [333 344]))                          
+                        :type "void")
+                        (reparse-symbol class_member_declaration) [298 643])
+                    ("liberar" function
+                       (:throws ("RemoteException")
+                        :typemodifiers ("public" "synchronized")
+                        :type "boolean")
+                        (reparse-symbol class_member_declaration) [653 1051]))                  
+                :type "class")
+                nil [85 1053]))          
+      :file "CerrojoImpl.java"
+      :pointmax 1054
+      :fsize 1390
+      :lastmodtime '(22809 33595 996623 57000)
+      :unmatched-syntax nil)
+    (semanticdb-table "Cerrojo.java"
+      :major-mode 'jdee-mode
+      :tags 
+        '( ("dsm" package nil nil [1 13])
+            ("java.rmi.*" include nil nil [14 32])
+            ("Cerrojo" type
+               (:typemodifiers ("public")
+                :interfaces ("Remote")
+                :members 
+                  ( ("adquirir" function
+                       (:throws ("RemoteException")
+                        :typemodifiers ("public")
+                        :arguments 
+                          ( ("exclusivo" variable (:type "boolean") (reparse-symbol formal_parameters) [102 119]))                          
+                        :type "void")
+                        (reparse-symbol interface_member_declaration) [80 144])
+                    ("liberar" function
+                       (:throws ("RemoteException")
+                        :type "boolean")
+                        (reparse-symbol interface_member_declaration) [149 191]))                  
+                :type "interface")
+                nil [34 193]))          
+      :file "Cerrojo.java"
+      :pointmax 194
+      :fsize 193
+      :lastmodtime '(22808 11740 520448 392000)
+      :unmatched-syntax nil)
+    (semanticdb-table "FabricaCerrojos.java"
+      :major-mode 'jdee-mode
+      :tags 
+        '( ("dsm" package nil nil [1 13])
+            ("java.rmi.*" include nil nil [14 32])
+            ("FabricaCerrojos" type
+               (:typemodifiers ("public")
+                :interfaces ("Remote")
+                :members 
+                  ( ("iniciar" function
+                       (:throws ("RemoteException")
+                        :arguments 
+                          ( ("s" variable (:type "String") (reparse-symbol formal_parameters) [101 109]))                          
+                        :type "Cerrojo")
+                        (reparse-symbol interface_member_declaration) [85 134]))                  
+                :type "interface")
+                nil [34 136]))          
+      :file "FabricaCerrojos.java"
+      :pointmax 137
+      :fsize 136
+      :lastmodtime '(22807 470 205750 971000)
+      :unmatched-syntax nil)
+    (semanticdb-table "FabricaCerrojosImpl.java"
+      :major-mode 'jdee-mode
+      :tags 
+        '( ("dsm" package nil nil [1 13])
+            ("java.rmi.*" include nil nil [14 32])
+            ("java.rmi.server.*" include nil nil [33 58])
+            ("java.util.*" include nil nil [59 78])
+            ("FabricaCerrojosImpl" type
+               (:typemodifiers ("public")
+                :interfaces ("FabricaCerrojos")
+                :superclasses "UnicastRemoteObject"
+                :members 
+                  ( ("FabricaCerrojosImpl" function
+                       (:constructor-flag t
+                        :throws ("RemoteException")
+                        :typemodifiers ("public"))
+                        (reparse-symbol class_member_declaration) [226 285])
+                    ("iniciar" function
+                       (:throws ("RemoteException")
+                        :typemodifiers ("public" "synchronized")
+                        :arguments 
+                          ( ("s" variable (:type "String") (reparse-symbol formal_parameters) [331 339]))                          
+                        :type "Cerrojo")
+                        (reparse-symbol class_member_declaration) [295 577]))                  
+                :type "class")
+                nil [82 579]))          
+      :file "FabricaCerrojosImpl.java"
+      :pointmax 581
+      :fsize 580
+      :lastmodtime '(22810 5043 360083 417000)
+      :unmatched-syntax '((SEMICOLON 218 . 219) (GT 208 . 209) (COMMA 199 . 200) (PRIVATE 177 . 184) (LT 192 . 193))))
+  :file "!home!guillermo!SSDD!javadsm.2016!dsm!semantic.cache"
+  :semantic-tag-version "2.0"
+  :semanticdb-version "2.2")

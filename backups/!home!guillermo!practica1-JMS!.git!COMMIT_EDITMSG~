@@ -1,0 +1,20 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# En la rama BBDD
+# Su rama está actualizada con «origin/BBDD».
+#
+# Cambios para hacer commit:
+#	modificado:    chat-1.0/src/main/scala/jmschat/DB/DB.scala
+#
+# Cambios no preparados para el commit:
+#	modificado:    chat-1.0/src/main/scala/jmschat/server/Server.scala
+#	modificado:    scala-examples/jms-hello-world-async/src/main/scala/com/example/Producer.scala
+#
+# Archivos sin seguimiento:
+#	chat-1.0/ensime.sbt
+#	chat-1.0/src/main/scala/jmschat/client/#Client.scala#
+#	redis-database/
+#	scala-examples/jms-hello-world-async/src/main/scala/com/example/#Consumer.scala#
+#	scala-examples/redis-demo/
+#
