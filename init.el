@@ -61,8 +61,23 @@
 
 ;;; elpy
 
-(setq elpy-rpc-python-command "python3")
+;(setq elpy-rpc-python-command "python3")
 (package-initialize)
 (elpy-enable)
 
-;;; init.el ends here
+;;; docker mode 
+(add-to-list 'load-path "~/GIT/dockerfile-mode/")
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+
+;;; kotlin mode
+
+(require 'flycheck-kotlin)
+(add-hook 'kotlin-mode-hook 'flycheck-mode)
+
+;;; Parenthesis
+(electric-pair-mode 1)
+
+;;; Init.el ends here
+ 
